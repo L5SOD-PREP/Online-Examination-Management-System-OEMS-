@@ -25,17 +25,17 @@ const Results = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-deepBlue-50">
       <nav className="bg-white shadow-lg">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-between items-center py-4">
             <button
               onClick={() => navigate('/dashboard')}
-              className="text-blue-600 hover:underline"
+              className="text-deepBlue-600 hover:underline"
             >
               ← Back to Dashboard
             </button>
-            <h1 className="text-2xl font-bold text-gray-800">My Results</h1>
+            <h1 className="text-2xl font-bold text-deepBlue-800">My Results</h1>
             <div></div>
           </div>
         </div>
@@ -45,7 +45,7 @@ const Results = () => {
         {location.state?.result && (
           <div className={`mb-8 p-6 rounded-lg ${
             location.state.result.status === 'pass' 
-              ? 'bg-green-100 border border-green-400' 
+              ? 'bg-purple-100 border border-purple-400' 
               : 'bg-red-100 border border-red-400'
           }`}>
             <h2 className="text-2xl font-bold mb-4">
@@ -53,15 +53,15 @@ const Results = () => {
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div>
-                <p className="text-gray-600">Score</p>
+                <p className="text-deepBlue-600">Score</p>
                 <p className="text-2xl font-bold">{location.state.result.score} / {location.state.result.totalMarks}</p>
               </div>
               <div>
-                <p className="text-gray-600">Percentage</p>
+                <p className="text-deepBlue-600">Percentage</p>
                 <p className="text-2xl font-bold">{location.state.result.percentage}%</p>
               </div>
               <div>
-                <p className="text-gray-600">Status</p>
+                <p className="text-deepBlue-600">Status</p>
                 <p className="text-2xl font-bold uppercase">{location.state.result.status}</p>
               </div>
             </div>
@@ -69,54 +69,54 @@ const Results = () => {
         )}
 
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">All Results</h3>
+          <h3 className="text-xl font-semibold text-deepBlue-800 mb-4">All Results</h3>
           
           {loading ? (
-            <p className="text-gray-600">Loading results...</p>
+            <p className="text-deepBlue-600">Loading results...</p>
           ) : results.length === 0 ? (
-            <p className="text-gray-600">No results yet. Take an exam to see your results here.</p>
+            <p className="text-deepBlue-600">No results yet. Take an exam to see your results here.</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="min-w-full">
                 <thead>
-                  <tr className="bg-gray-50">
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <tr className="bg-deepBlue-50">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-deepBlue-600 uppercase tracking-wider">
                       Exam
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-deepBlue-600 uppercase tracking-wider">
                       Score
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-deepBlue-600 uppercase tracking-wider">
                       Percentage
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-deepBlue-600 uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-deepBlue-600 uppercase tracking-wider">
                       Date
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-white divide-y divide-deepBlue-100">
                   {results.map((result) => (
                     <tr key={result.result_id}>
-                      <td className="px-6 py-4 whitespace-nowrap text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-deepBlue-900">
                         {result.exam_title}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-deepBlue-900">
                         {result.score} / {result.total_marks}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-deepBlue-900">
                         {result.percentage}%
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          result.status === 'pass' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                          result.status === 'pass' ? 'bg-purple-100 text-purple-800' : 'bg-red-100 text-red-800'
                         }`}>
                           {result.status.toUpperCase()}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-deepBlue-900">
                         {new Date(result.created_at).toLocaleDateString()}
                       </td>
                     </tr>
