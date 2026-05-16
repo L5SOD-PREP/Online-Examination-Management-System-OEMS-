@@ -50,17 +50,17 @@ const Reports = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-deepBlue-50">
       <nav className="bg-white shadow-lg">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex justify-between items-center py-4">
             <button
               onClick={() => navigate('/dashboard')}
-              className="text-blue-600 hover:underline"
+              className="text-deepBlue-600 hover:underline"
             >
               ← Back to Dashboard
             </button>
-            <h1 className="text-2xl font-bold text-gray-800">Reports</h1>
+            <h1 className="text-2xl font-bold text-deepBlue-800">Reports</h1>
             <div></div>
           </div>
         </div>
@@ -68,15 +68,15 @@ const Reports = () => {
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">Generate Report</h3>
+          <h3 className="text-xl font-semibold text-deepBlue-800 mb-4">Generate Report</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-gray-700 text-sm font-bold mb-2">Report Type</label>
+              <label className="block text-deepBlue-700 text-sm font-bold mb-2">Report Type</label>
               <select
                 value={reportType}
                 onChange={(e) => setReportType(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-2 border border-deepBlue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-deepBlue-500"
               >
                 <option value="performance">Student Performance Report</option>
                 <option value="passfail">Pass/Fail Report</option>
@@ -86,11 +86,11 @@ const Reports = () => {
 
             {reportType !== 'performance' && (
               <div>
-                <label className="block text-gray-700 text-sm font-bold mb-2">Select Exam</label>
+                <label className="block text-deepBlue-700 text-sm font-bold mb-2">Select Exam</label>
                 <select
                   value={selectedExam || ''}
                   onChange={(e) => setSelectedExam(parseInt(e.target.value))}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-4 py-2 border border-deepBlue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-deepBlue-500"
                 >
                   <option value="">Select an exam</option>
                   {exams.map((exam) => (
@@ -105,7 +105,7 @@ const Reports = () => {
 
           <button
             onClick={handleGenerateReport}
-            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
+            className="bg-deepBlue-600 text-white px-6 py-2 rounded-lg hover:bg-deepBlue-700 transition"
           >
             Generate Report
           </button>
@@ -113,47 +113,47 @@ const Reports = () => {
 
         {reportData && (
           <div className="bg-white rounded-lg shadow-md p-6">
-            <h3 className="text-xl font-semibold text-gray-800 mb-6">Report Results</h3>
+            <h3 className="text-xl font-semibold text-deepBlue-800 mb-6">Report Results</h3>
 
             {reportType === 'performance' && (
               <div>
-                <div className="mb-6 p-4 bg-blue-50 rounded-lg">
-                  <h4 className="font-semibold text-gray-800 mb-2">Student Information</h4>
+                <div className="mb-6 p-4 bg-deepBlue-50 rounded-lg">
+                  <h4 className="font-semibold text-deepBlue-800 mb-2">Student Information</h4>
                   <p><strong>Name:</strong> {reportData.student.fullName}</p>
                   <p><strong>Email:</strong> {reportData.student.email}</p>
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                  <div className="p-4 bg-green-50 rounded-lg">
-                    <p className="text-gray-600">Total Attempts</p>
+                  <div className="p-4 bg-purple-50 rounded-lg">
+                    <p className="text-deepBlue-600">Total Attempts</p>
                     <p className="text-2xl font-bold">{reportData.statistics.totalAttempts}</p>
                   </div>
-                  <div className="p-4 bg-green-50 rounded-lg">
-                    <p className="text-gray-600">Passed</p>
-                    <p className="text-2xl font-bold text-green-600">{reportData.statistics.passedAttempts}</p>
+                  <div className="p-4 bg-purple-50 rounded-lg">
+                    <p className="text-deepBlue-600">Passed</p>
+                    <p className="text-2xl font-bold text-purple-600">{reportData.statistics.passedAttempts}</p>
                   </div>
                   <div className="p-4 bg-red-50 rounded-lg">
-                    <p className="text-gray-600">Failed</p>
+                    <p className="text-deepBlue-600">Failed</p>
                     <p className="text-2xl font-bold text-red-600">{reportData.statistics.failedAttempts}</p>
                   </div>
-                  <div className="p-4 bg-blue-50 rounded-lg">
-                    <p className="text-gray-600">Average Score</p>
+                  <div className="p-4 bg-deepBlue-50 rounded-lg">
+                    <p className="text-deepBlue-600">Average Score</p>
                     <p className="text-2xl font-bold">{reportData.statistics.averageScore}%</p>
                   </div>
                 </div>
 
-                <h4 className="font-semibold text-gray-800 mb-4">Detailed Results</h4>
+                <h4 className="font-semibold text-deepBlue-800 mb-4">Detailed Results</h4>
                 <div className="overflow-x-auto">
                   <table className="min-w-full">
                     <thead>
-                      <tr className="bg-gray-50">
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Exam</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Score</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Percentage</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                      <tr className="bg-deepBlue-50">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-deepBlue-600 uppercase">Exam</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-deepBlue-600 uppercase">Score</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-deepBlue-600 uppercase">Percentage</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-deepBlue-600 uppercase">Status</th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="bg-white divide-y divide-deepBlue-100">
                       {reportData.results.map((result) => (
                         <tr key={result.result_id}>
                           <td className="px-6 py-4">{result.exam_title}</td>
@@ -161,7 +161,7 @@ const Reports = () => {
                           <td className="px-6 py-4">{result.percentage}%</td>
                           <td className="px-6 py-4">
                             <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                              result.status === 'pass' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                              result.status === 'pass' ? 'bg-purple-100 text-purple-800' : 'bg-red-100 text-red-800'
                             }`}>
                               {result.status.toUpperCase()}
                             </span>
@@ -176,45 +176,45 @@ const Reports = () => {
 
             {reportType === 'passfail' && (
               <div>
-                <div className="mb-6 p-4 bg-blue-50 rounded-lg">
-                  <h4 className="font-semibold text-gray-800 mb-2">Exam Information</h4>
+                <div className="mb-6 p-4 bg-deepBlue-50 rounded-lg">
+                  <h4 className="font-semibold text-deepBlue-800 mb-2">Exam Information</h4>
                   <p><strong>Title:</strong> {reportData.exam.examTitle}</p>
                   <p><strong>Total Marks:</strong> {reportData.exam.totalMarks}</p>
                   <p><strong>Passing Marks:</strong> {reportData.exam.passingMarks}</p>
                 </div>
 
                 <div className="grid grid-cols-3 gap-4 mb-6">
-                  <div className="p-4 bg-blue-50 rounded-lg">
-                    <p className="text-gray-600">Total Attempts</p>
+                  <div className="p-4 bg-deepBlue-50 rounded-lg">
+                    <p className="text-deepBlue-600">Total Attempts</p>
                     <p className="text-2xl font-bold">{reportData.statistics.totalAttempts}</p>
                   </div>
-                  <div className="p-4 bg-green-50 rounded-lg">
-                    <p className="text-gray-600">Passed</p>
-                    <p className="text-2xl font-bold text-green-600">{reportData.statistics.passedAttempts}</p>
+                  <div className="p-4 bg-purple-50 rounded-lg">
+                    <p className="text-deepBlue-600">Passed</p>
+                    <p className="text-2xl font-bold text-purple-600">{reportData.statistics.passedAttempts}</p>
                   </div>
                   <div className="p-4 bg-red-50 rounded-lg">
-                    <p className="text-gray-600">Failed</p>
+                    <p className="text-deepBlue-600">Failed</p>
                     <p className="text-2xl font-bold text-red-600">{reportData.statistics.failedAttempts}</p>
                   </div>
                 </div>
 
-                <div className="p-4 bg-purple-50 rounded-lg mb-6">
-                  <p className="text-gray-600">Pass Rate</p>
+                <div className="p-4 bg-purple-100 rounded-lg mb-6">
+                  <p className="text-deepBlue-600">Pass Rate</p>
                   <p className="text-3xl font-bold text-purple-600">{reportData.statistics.passRate}%</p>
                 </div>
 
-                <h4 className="font-semibold text-gray-800 mb-4">Student Results</h4>
+                <h4 className="font-semibold text-deepBlue-800 mb-4">Student Results</h4>
                 <div className="overflow-x-auto">
                   <table className="min-w-full">
                     <thead>
-                      <tr className="bg-gray-50">
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Score</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Percentage</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                      <tr className="bg-deepBlue-50">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-deepBlue-600 uppercase">Student</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-deepBlue-600 uppercase">Score</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-deepBlue-600 uppercase">Percentage</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-deepBlue-600 uppercase">Status</th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="bg-white divide-y divide-deepBlue-100">
                       {reportData.results.map((result) => (
                         <tr key={result.result_id}>
                           <td className="px-6 py-4">{result.full_name}</td>
@@ -222,7 +222,7 @@ const Reports = () => {
                           <td className="px-6 py-4">{result.percentage}%</td>
                           <td className="px-6 py-4">
                             <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                              result.status === 'pass' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                              result.status === 'pass' ? 'bg-purple-100 text-purple-800' : 'bg-red-100 text-red-800'
                             }`}>
                               {result.status.toUpperCase()}
                             </span>
@@ -237,64 +237,64 @@ const Reports = () => {
 
             {reportType === 'exam' && (
               <div>
-                <div className="mb-6 p-4 bg-blue-50 rounded-lg">
-                  <h4 className="font-semibold text-gray-800 mb-2">Exam Information</h4>
+                <div className="mb-6 p-4 bg-deepBlue-50 rounded-lg">
+                  <h4 className="font-semibold text-deepBlue-800 mb-2">Exam Information</h4>
                   <p><strong>Title:</strong> {reportData.exam.examTitle}</p>
                   <p><strong>Total Marks:</strong> {reportData.exam.totalMarks}</p>
                   <p><strong>Passing Marks:</strong> {reportData.exam.passingMarks}</p>
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                  <div className="p-4 bg-blue-50 rounded-lg">
-                    <p className="text-gray-600">Total Attempts</p>
+                  <div className="p-4 bg-deepBlue-50 rounded-lg">
+                    <p className="text-deepBlue-600">Total Attempts</p>
                     <p className="text-2xl font-bold">{reportData.statistics.totalAttempts}</p>
                   </div>
-                  <div className="p-4 bg-green-50 rounded-lg">
-                    <p className="text-gray-600">Average Score</p>
+                  <div className="p-4 bg-purple-50 rounded-lg">
+                    <p className="text-deepBlue-600">Average Score</p>
                     <p className="text-2xl font-bold">{reportData.statistics.averageScore}%</p>
                   </div>
-                  <div className="p-4 bg-purple-50 rounded-lg">
-                    <p className="text-gray-600">Highest Score</p>
+                  <div className="p-4 bg-purple-100 rounded-lg">
+                    <p className="text-deepBlue-600">Highest Score</p>
                     <p className="text-2xl font-bold">{reportData.statistics.highestScore}%</p>
                   </div>
                   <div className="p-4 bg-red-50 rounded-lg">
-                    <p className="text-gray-600">Lowest Score</p>
+                    <p className="text-deepBlue-600">Lowest Score</p>
                     <p className="text-2xl font-bold">{reportData.statistics.lowestScore}%</p>
                   </div>
                 </div>
 
-                <h4 className="font-semibold text-gray-800 mb-4">Score Distribution</h4>
+                <h4 className="font-semibold text-deepBlue-800 mb-4">Score Distribution</h4>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                  <div className="p-4 bg-green-100 rounded-lg">
-                    <p className="text-gray-600">Excellent (80%+)</p>
+                  <div className="p-4 bg-purple-100 rounded-lg">
+                    <p className="text-deepBlue-600">Excellent (80%+)</p>
                     <p className="text-2xl font-bold">{reportData.statistics.scoreDistribution.excellent}</p>
                   </div>
-                  <div className="p-4 bg-blue-100 rounded-lg">
-                    <p className="text-gray-600">Good (60-79%)</p>
+                  <div className="p-4 bg-deepBlue-100 rounded-lg">
+                    <p className="text-deepBlue-600">Good (60-79%)</p>
                     <p className="text-2xl font-bold">{reportData.statistics.scoreDistribution.good}</p>
                   </div>
                   <div className="p-4 bg-yellow-100 rounded-lg">
-                    <p className="text-gray-600">Average (40-59%)</p>
+                    <p className="text-deepBlue-600">Average (40-59%)</p>
                     <p className="text-2xl font-bold">{reportData.statistics.scoreDistribution.average}</p>
                   </div>
                   <div className="p-4 bg-red-100 rounded-lg">
-                    <p className="text-gray-600">Poor (&lt;40%)</p>
+                    <p className="text-deepBlue-600">Poor (&lt;40%)</p>
                     <p className="text-2xl font-bold">{reportData.statistics.scoreDistribution.poor}</p>
                   </div>
                 </div>
 
-                <h4 className="font-semibold text-gray-800 mb-4">Detailed Results</h4>
+                <h4 className="font-semibold text-deepBlue-800 mb-4">Detailed Results</h4>
                 <div className="overflow-x-auto">
                   <table className="min-w-full">
                     <thead>
-                      <tr className="bg-gray-50">
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Score</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Percentage</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                      <tr className="bg-deepBlue-50">
+                        <th className="px-6 py-3 text-left text-xs font-medium text-deepBlue-600 uppercase">Student</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-deepBlue-600 uppercase">Score</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-deepBlue-600 uppercase">Percentage</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-deepBlue-600 uppercase">Status</th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="bg-white divide-y divide-deepBlue-100">
                       {reportData.results.map((result) => (
                         <tr key={result.result_id}>
                           <td className="px-6 py-4">{result.full_name}</td>
@@ -302,7 +302,7 @@ const Reports = () => {
                           <td className="px-6 py-4">{result.percentage}%</td>
                           <td className="px-6 py-4">
                             <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                              result.status === 'pass' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                              result.status === 'pass' ? 'bg-purple-100 text-purple-800' : 'bg-red-100 text-red-800'
                             }`}>
                               {result.status.toUpperCase()}
                             </span>
