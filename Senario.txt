@@ -1,0 +1,43 @@
+Scenario 4: Online Examination Management System (OEMS)
+Integrated Situation
+Future Skills Academy currently faces challenges because Examinations are performed manually using printed papers. The organization requires a modern web application to Develop a computer-based examination system..
+Required Technologies
+Frontend: React.js, Tailwind CSS, Axios, React Router DOM
+Backend: Node.js and Express.js
+Database: MySQL or MongoDB
+Authentication: Session-based login with bcrypt password encryption
+Required Entities and Attributes
+Students: StudentID, FullName, Email, Password
+Exams: ExamID, ExamTitle, Duration, TotalMarks
+Questions: QuestionID, ExamID, QuestionText, CorrectAnswer
+Attempts: AttemptID, StudentID, ExamID, Score
+Results: ResultID, AttemptID, FinalScore, Status
+Core Business Logic
+Countdown timer for exams
+Automatic score calculation
+Pass/fail generation
+Multiple exam attempts
+Frontend Requirements
+Student login
+Exam page
+Question management
+Results page
+Backend Requirements
+Exam APIs
+Authentication
+Scoring system
+Timer validation
+Required Reports
+Student performance report
+Pass/fail report
+Exam result report
+Additional Examination Requirements
+Design ERD before implementation
+Use proper primary keys and foreign keys
+Implement CRUD operations
+Create responsive user interfaces
+Use Tailwind CSS
+Integrate frontend and backend using Axios
+Implement authentication and validation
+Generate reports dynamically
+
