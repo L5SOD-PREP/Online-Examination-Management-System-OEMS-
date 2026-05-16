@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import Welcome from './pages/Welcome';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
@@ -42,6 +43,7 @@ function App() {
   return (
     <AuthProvider>
       <Routes>
+        <Route path="/" element={<Welcome />} />
         <Route path="/login" element={
           <PublicRoute>
             <Login />
@@ -82,7 +84,6 @@ function App() {
             <Reports />
           </ProtectedRoute>
         } />
-        <Route path="/" element={<Navigate to="/dashboard" />} />
       </Routes>
     </AuthProvider>
   );
