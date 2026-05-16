@@ -278,7 +278,7 @@ const Reports = () => {
                     <p className="text-2xl font-bold">{reportData.statistics.scoreDistribution.average}</p>
                   </div>
                   <div className="p-4 bg-red-100 rounded-lg">
-                    <p className="text-gray-600">Poor (<40%)</p>
+                    <p className="text-gray-600">Poor (&lt;40%)</p>
                     <p className="text-2xl font-bold">{reportData.statistics.scoreDistribution.poor}</p>
                   </div>
                 </div>
