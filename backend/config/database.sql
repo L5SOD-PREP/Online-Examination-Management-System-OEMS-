@@ -4,12 +4,13 @@
 CREATE DATABASE IF NOT EXISTS oems_database;
 USE oems_database;
 
--- Students table
-CREATE TABLE IF NOT EXISTS students (
-  student_id INT AUTO_INCREMENT PRIMARY KEY,
+-- Users table (replaces students table to support multiple roles)
+CREATE TABLE IF NOT EXISTS users (
+  user_id INT AUTO_INCREMENT PRIMARY KEY,
   full_name VARCHAR(255) NOT NULL,
   email VARCHAR(255) UNIQUE NOT NULL,
   password VARCHAR(255) NOT NULL,
+  role ENUM('admin', 'teacher', 'student') NOT NULL DEFAULT 'student',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -20,7 +21,9 @@ CREATE TABLE IF NOT EXISTS exams (
   duration INT NOT NULL COMMENT 'Duration in minutes',
   total_marks INT NOT NULL,
   passing_marks INT NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  created_by INT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (created_by) REFERENCES users(user_id) ON DELETE SET NULL
 );
 
 -- Questions table
@@ -41,13 +44,13 @@ CREATE TABLE IF NOT EXISTS questions (
 -- Attempts table
 CREATE TABLE IF NOT EXISTS attempts (
   attempt_id INT AUTO_INCREMENT PRIMARY KEY,
-  student_id INT NOT NULL,
+  user_id INT NOT NULL,
   exam_id INT NOT NULL,
   start_time DATETIME NOT NULL,
   end_time DATETIME,
   status ENUM('in_progress', 'completed', 'abandoned') DEFAULT 'in_progress',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
   FOREIGN KEY (exam_id) REFERENCES exams(exam_id) ON DELETE CASCADE
 );
 
@@ -76,9 +79,11 @@ CREATE TABLE IF NOT EXISTS results (
 );
 
 -- Insert sample data
-INSERT INTO students (full_name, email, password) VALUES
-('John Doe', 'john@example.com', '$2b$10$X7OP/lSdFqGqZvZqZqZqZu'),
-('Jane Smith', 'jane@example.com', '$2b$10$X7OP/lSdFqGqZvZqZqZqZu');
+INSERT INTO users (full_name, email, password, role) VALUES
+('Admin User', 'admin@example.com', '$2b$10$X7OP/lSdFqGqZvZqZqZqZu', 'admin'),
+('Teacher User', 'teacher@example.com', '$2b$10$X7OP/lSdFqGqZvZqZqZqZu', 'teacher'),
+('John Doe', 'john@example.com', '$2b$10$X7OP/lSdFqGqZvZqZqZqZu', 'student'),
+('Jane Smith', 'jane@example.com', '$2b$10$X7OP/lSdFqGqZvZqZqZqZu', 'student');
 
 INSERT INTO exams (exam_title, duration, total_marks, passing_marks) VALUES
 ('JavaScript Basics', 30, 10, 6),
