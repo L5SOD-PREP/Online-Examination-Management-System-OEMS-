@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { getAllExams } from '../api/exams';
 import { getQuestionsByExam, createQuestion, deleteQuestion } from '../api/questions';
 import { useAuth } from '../context/AuthContext';
@@ -7,9 +7,10 @@ import { logout as logoutApi } from '../api/auth';
 
 const QuestionManagement = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, logout } = useAuth();
   const [exams, setExams] = useState([]);
-  const [selectedExam, setSelectedExam] = useState(null);
+  const [selectedExam, setSelectedExam] = useState(location.state?.examId || null);
   const [questions, setQuestions] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -131,22 +132,34 @@ const QuestionManagement = () => {
                 My Results
               </button>
             </li>
-            <li>
-              <button
-                onClick={() => navigate('/questions')}
-                className="w-full text-left px-4 py-3 rounded-lg bg-blue-800 hover:bg-blue-700 transition font-medium"
-              >
-                Question Management
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => navigate('/reports')}
-                className="w-full text-left px-4 py-3 rounded-lg hover:bg-blue-700 transition font-medium"
-              >
-                Reports
-              </button>
-            </li>
+            {(user?.role === 'admin' || user?.role === 'teacher') && (
+              <>
+                <li>
+                  <button
+                    onClick={() => navigate('/exam-management')}
+                    className="w-full text-left px-4 py-3 rounded-lg hover:bg-blue-700 transition font-medium"
+                  >
+                    Exam Management
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => navigate('/questions')}
+                    className="w-full text-left px-4 py-3 rounded-lg bg-blue-800 hover:bg-blue-700 transition font-medium"
+                  >
+                    Question Management
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => navigate('/reports')}
+                    className="w-full text-left px-4 py-3 rounded-lg hover:bg-blue-700 transition font-medium"
+                  >
+                    Reports
+                  </button>
+                </li>
+              </>
+            )}
           </ul>
         </nav>
 
@@ -154,6 +167,7 @@ const QuestionManagement = () => {
           <div className="mb-4">
             <p className="text-sm text-blue-200">Welcome,</p>
             <p className="font-semibold">{user?.fullName}</p>
+            <p className="text-xs text-blue-300 capitalize">{user?.role}</p>
           </div>
           <button
             onClick={handleLogout}
