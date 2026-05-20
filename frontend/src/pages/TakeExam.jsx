@@ -164,22 +164,34 @@ const TakeExam = () => {
                 My Results
               </button>
             </li>
-            <li>
-              <button
-                onClick={() => navigate('/questions')}
-                className="w-full text-left px-4 py-3 rounded-lg hover:bg-blue-700 transition font-medium"
-              >
-                Question Management
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => navigate('/reports')}
-                className="w-full text-left px-4 py-3 rounded-lg hover:bg-blue-700 transition font-medium"
-              >
-                Reports
-              </button>
-            </li>
+            {(user?.role === 'admin' || user?.role === 'teacher') && (
+              <>
+                <li>
+                  <button
+                    onClick={() => navigate('/exam-management')}
+                    className="w-full text-left px-4 py-3 rounded-lg hover:bg-blue-700 transition font-medium"
+                  >
+                    Exam Management
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => navigate('/questions')}
+                    className="w-full text-left px-4 py-3 rounded-lg hover:bg-blue-700 transition font-medium"
+                  >
+                    Question Management
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => navigate('/reports')}
+                    className="w-full text-left px-4 py-3 rounded-lg hover:bg-blue-700 transition font-medium"
+                  >
+                    Reports
+                  </button>
+                </li>
+              </>
+            )}
           </ul>
         </nav>
 
@@ -187,6 +199,7 @@ const TakeExam = () => {
           <div className="mb-4">
             <p className="text-sm text-blue-200">Welcome,</p>
             <p className="font-semibold">{user?.fullName}</p>
+            <p className="text-xs text-blue-300 capitalize">{user?.role}</p>
           </div>
           <button
             onClick={handleLogout}
