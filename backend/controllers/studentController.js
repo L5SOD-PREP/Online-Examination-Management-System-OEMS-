@@ -1,8 +1,8 @@
-const Student = require('../models/Student');
+const User = require('../models/User');
 
 const getAllStudents = async (req, res) => {
   try {
-    const students = await Student.getAll();
+    const students = await User.getAllByRole('student');
     res.json(students);
   } catch (error) {
     console.error('Get students error:', error);
@@ -13,8 +13,8 @@ const getAllStudents = async (req, res) => {
 const getStudentById = async (req, res) => {
   try {
     const { id } = req.params;
-    const student = await Student.findById(id);
-    if (!student) {
+    const student = await User.findById(id);
+    if (!student || student.role !== 'student') {
       return res.status(404).json({ error: 'Student not found' });
     }
     res.json(student);
@@ -33,7 +33,7 @@ const updateStudent = async (req, res) => {
       return res.status(400).json({ error: 'Full name and email are required' });
     }
 
-    await Student.update(id, fullName, email);
+    await User.update(id, fullName, email);
     res.json({ message: 'Student updated successfully' });
   } catch (error) {
     console.error('Update student error:', error);
@@ -44,7 +44,7 @@ const updateStudent = async (req, res) => {
 const deleteStudent = async (req, res) => {
   try {
     const { id } = req.params;
-    await Student.delete(id);
+    await User.delete(id);
     res.json({ message: 'Student deleted successfully' });
   } catch (error) {
     console.error('Delete student error:', error);
