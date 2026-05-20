@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const Student = require('../models/Student');
+const User = require('../models/User');
 
 const register = async (req, res) => {
   try {
@@ -9,15 +9,15 @@ const register = async (req, res) => {
       return res.status(400).json({ error: 'All fields are required' });
     }
 
-    const existingStudent = await Student.findByEmail(email);
-    if (existingStudent) {
+    const existingUser = await User.findByEmail(email);
+    if (existingUser) {
       return res.status(400).json({ error: 'Email already registered' });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const studentId = await Student.create(fullName, email, hashedPassword);
+    const userId = await User.create(fullName, email, hashedPassword, 'student');
 
-    res.status(201).json({ message: 'Student registered successfully', studentId });
+    res.status(201).json({ message: 'User registered successfully', userId });
   } catch (error) {
     console.error('Registration error:', error);
     res.status(500).json({ error: 'Registration failed' });
@@ -32,25 +32,27 @@ const login = async (req, res) => {
       return res.status(400).json({ error: 'Email and password are required' });
     }
 
-    const student = await Student.findByEmail(email);
-    if (!student) {
+    const user = await User.findByEmail(email);
+    if (!user) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    const isValidPassword = await bcrypt.compare(password, student.password);
+    const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    req.session.studentId = student.student_id;
-    req.session.studentName = student.full_name;
+    req.session.userId = user.user_id;
+    req.session.userName = user.full_name;
+    req.session.role = user.role;
 
     res.json({
       message: 'Login successful',
-      student: {
-        studentId: student.student_id,
-        fullName: student.full_name,
-        email: student.email
+      user: {
+        userId: user.user_id,
+        fullName: user.full_name,
+        email: user.email,
+        role: user.role
       }
     });
   } catch (error) {
@@ -68,14 +70,21 @@ const logout = (req, res) => {
   });
 };
 
-const getCurrentUser = (req, res) => {
-  if (!req.session.studentId) {
+const getCurrentUser = async (req, res) => {
+  if (!req.session.userId) {
     return res.status(401).json({ error: 'Not logged in' });
   }
 
+  const user = await User.findById(req.session.userId);
+  if (!user) {
+    return res.status(401).json({ error: 'User not found' });
+  }
+
   res.json({
-    studentId: req.session.studentId,
-    fullName: req.session.studentName
+    userId: user.user_id,
+    fullName: user.full_name,
+    email: user.email,
+    role: user.role
   });
 };
 
