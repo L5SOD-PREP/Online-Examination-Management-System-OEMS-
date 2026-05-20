@@ -9,6 +9,7 @@ import ExamList from './pages/ExamList';
 import TakeExam from './pages/TakeExam';
 import Results from './pages/Results';
 import QuestionManagement from './pages/QuestionManagement';
+import ExamManagement from './pages/ExamManagement';
 import Reports from './pages/Reports';
 
 const ProtectedRoute = ({ children }) => {
@@ -20,6 +21,24 @@ const ProtectedRoute = ({ children }) => {
   
   if (!user) {
     return <Navigate to="/login" />;
+  }
+  
+  return children;
+};
+
+const RoleProtectedRoute = ({ children, allowedRoles }) => {
+  const { user, loading } = useAuth();
+  
+  if (loading) {
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+  }
+  
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+
+  if (!allowedRoles.includes(user.role)) {
+    return <Navigate to="/dashboard" />;
   }
   
   return children;
@@ -75,14 +94,19 @@ function App() {
           </ProtectedRoute>
         } />
         <Route path="/questions" element={
-          <ProtectedRoute>
+          <RoleProtectedRoute allowedRoles={['admin', 'teacher']}>
             <QuestionManagement />
-          </ProtectedRoute>
+          </RoleProtectedRoute>
+        } />
+        <Route path="/exam-management" element={
+          <RoleProtectedRoute allowedRoles={['admin', 'teacher']}>
+            <ExamManagement />
+          </RoleProtectedRoute>
         } />
         <Route path="/reports" element={
-          <ProtectedRoute>
+          <RoleProtectedRoute allowedRoles={['admin', 'teacher']}>
             <Reports />
-          </ProtectedRoute>
+          </RoleProtectedRoute>
         } />
       </Routes>
     </AuthProvider>
