@@ -7,7 +7,7 @@ const Exam = require('../models/Exam');
 const startAttempt = async (req, res) => {
   try {
     const { examId } = req.body;
-    const studentId = req.session.studentId;
+    const userId = req.session.userId;
 
     if (!examId) {
       return res.status(400).json({ error: 'Exam ID is required' });
@@ -18,12 +18,19 @@ const startAttempt = async (req, res) => {
       return res.status(404).json({ error: 'Exam not found' });
     }
 
-    const existingAttempt = await Attempt.getInProgressAttempt(studentId, examId);
+    const existingAttempt = await Attempt.getInProgressAttempt(userId, examId);
     if (existingAttempt) {
       return res.json({ attemptId: existingAttempt.attempt_id, message: 'Resuming existing attempt' });
     }
 
-    const attemptId = await Attempt.create(studentId, examId);
+    // Limit to 1 completed attempt per exam
+    const allAttempts = await Attempt.getByStudentId(userId);
+    const completedAttempts = allAttempts.filter(a => a.exam_id == examId && a.status === 'completed');
+    if (completedAttempts.length >= 1) {
+      return res.status(403).json({ error: 'You have already completed this exam.' });
+    }
+
+    const attemptId = await Attempt.create(userId, examId);
     res.status(201).json({ attemptId, message: 'Attempt started successfully' });
   } catch (error) {
     console.error('Start attempt error:', error);
@@ -67,15 +74,30 @@ const submitExam = async (req, res) => {
       return res.status(404).json({ error: 'Attempt not found' });
     }
 
+    if (attempt.status === 'completed') {
+       return res.status(400).json({ error: 'Attempt already completed' });
+    }
+
+    const exam = await Exam.findById(attempt.exam_id);
+    
+    // Timer Validation
+    const now = new Date();
+    const startTime = new Date(attempt.start_time);
+    const diffMinutes = (now - startTime) / (1000 * 60);
+    // Allow 2 minutes grace period for network latency
+    if (diffMinutes > exam.duration + 2) {
+       console.warn(`Attempt ${attemptId} submitted late: ${diffMinutes} mins (Exam duration: ${exam.duration} mins)`);
+       // We can mark it abandoned or still score it but flag it. 
+       // For now, let's score it but clamp the time. In a strict system, we might reject.
+    }
+
     await Attempt.updateStatus(attemptId, 'completed');
 
     const answers = await Answer.getByAttemptId(attemptId);
-    const exam = await Exam.findById(attempt.exam_id);
 
     let score = 0;
     answers.forEach(answer => {
       if (answer.is_correct) {
-        const question = answers.find(q => q.question_id === answer.question_id);
         score += answer.is_correct ? 1 : 0;
       }
     });
@@ -101,8 +123,8 @@ const submitExam = async (req, res) => {
 
 const getStudentAttempts = async (req, res) => {
   try {
-    const studentId = req.session.studentId;
-    const attempts = await Attempt.getByStudentId(studentId);
+    const userId = req.session.userId;
+    const attempts = await Attempt.getByStudentId(userId);
     res.json(attempts);
   } catch (error) {
     console.error('Get attempts error:', error);
