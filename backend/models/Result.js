@@ -19,7 +19,7 @@ class Result {
 
   static async getByStudentId(studentId) {
     const [rows] = await db.execute(
-      'SELECT r.*, a.exam_id, e.exam_title FROM results r JOIN attempts a ON r.attempt_id = a.attempt_id JOIN exams e ON a.exam_id = e.exam_id WHERE a.student_id = ? ORDER BY r.created_at DESC',
+      'SELECT r.*, a.exam_id, e.exam_title FROM results r JOIN attempts a ON r.attempt_id = a.attempt_id JOIN exams e ON a.exam_id = e.exam_id WHERE a.user_id = ? ORDER BY r.created_at DESC',
       [studentId]
     );
     return rows;
@@ -27,7 +27,7 @@ class Result {
 
   static async getByExamId(examId) {
     const [rows] = await db.execute(
-      'SELECT r.*, a.student_id, s.full_name, s.email FROM results r JOIN attempts a ON r.attempt_id = a.attempt_id JOIN students s ON a.student_id = s.student_id WHERE a.exam_id = ? ORDER BY r.created_at DESC',
+      'SELECT r.*, a.user_id, u.full_name, u.email FROM results r JOIN attempts a ON r.attempt_id = a.attempt_id JOIN users u ON a.user_id = u.user_id WHERE a.exam_id = ? ORDER BY r.created_at DESC',
       [examId]
     );
     return rows;
@@ -35,7 +35,7 @@ class Result {
 
   static async getAll() {
     const [rows] = await db.execute(
-      'SELECT r.*, a.student_id, s.full_name, a.exam_id, e.exam_title FROM results r JOIN attempts a ON r.attempt_id = a.attempt_id JOIN students s ON a.student_id = s.student_id JOIN exams e ON a.exam_id = e.exam_id ORDER BY r.created_at DESC'
+      'SELECT r.*, a.user_id, u.full_name, a.exam_id, e.exam_title FROM results r JOIN attempts a ON r.attempt_id = a.attempt_id JOIN users u ON a.user_id = u.user_id JOIN exams e ON a.exam_id = e.exam_id ORDER BY r.created_at DESC'
     );
     return rows;
   }

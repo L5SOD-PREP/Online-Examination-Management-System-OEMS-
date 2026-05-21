@@ -24,7 +24,7 @@ const startAttempt = async (req, res) => {
     }
 
     // Limit to 1 completed attempt per exam
-    const allAttempts = await Attempt.getByStudentId(userId);
+    const allAttempts = await Attempt.getByUserId(userId);
     const completedAttempts = allAttempts.filter(a => a.exam_id == examId && a.status === 'completed');
     if (completedAttempts.length >= 1) {
       return res.status(403).json({ error: 'You have already completed this exam.' });

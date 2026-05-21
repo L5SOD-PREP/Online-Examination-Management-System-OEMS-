@@ -18,7 +18,7 @@ const Login = () => {
 
     try {
       const response = await loginApi(email, password);
-      login(response.student);
+      login(response.user);
       navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.error || 'Login failed. Please verify credentials.');

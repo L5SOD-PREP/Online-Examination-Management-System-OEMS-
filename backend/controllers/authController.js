@@ -72,19 +72,21 @@ const logout = (req, res) => {
 
 const getCurrentUser = async (req, res) => {
   if (!req.session.userId) {
-    return res.status(401).json({ error: 'Not logged in' });
+    return res.json({ user: null });
   }
 
   const user = await User.findById(req.session.userId);
   if (!user) {
-    return res.status(401).json({ error: 'User not found' });
+    return res.json({ user: null });
   }
 
   res.json({
-    userId: user.user_id,
-    fullName: user.full_name,
-    email: user.email,
-    role: user.role
+    user: {
+      userId: user.user_id,
+      fullName: user.full_name,
+      email: user.email,
+      role: user.role
+    }
   });
 };
 

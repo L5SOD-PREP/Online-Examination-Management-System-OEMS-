@@ -2,14 +2,15 @@
 
 ## Entities and Relationships
 
-### 1. Students Table
+### 1. Users Table (replaces Students table to support multiple roles)
 ```
-Table: students
+Table: users
 -----------------
-- student_id (PK, INT, AUTO_INCREMENT)
+- user_id (PK, INT, AUTO_INCREMENT)
 - full_name (VARCHAR(255), NOT NULL)
 - email (VARCHAR(255), UNIQUE, NOT NULL)
 - password (VARCHAR(255), NOT NULL)
+- role (ENUM('admin', 'teacher', 'student'), NOT NULL, DEFAULT 'student')
 - created_at (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
 ```
 
@@ -22,7 +23,10 @@ Table: exams
 - duration (INT, NOT NULL) -- in minutes
 - total_marks (INT, NOT NULL)
 - passing_marks (INT, NOT NULL)
+- created_by (INT, FK)
 - created_at (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
+
+Foreign Key: created_by REFERENCES users(user_id) ON DELETE SET NULL
 ```
 
 ### 3. Questions Table
@@ -48,14 +52,14 @@ Foreign Key: exam_id REFERENCES exams(exam_id) ON DELETE CASCADE
 Table: attempts
 -----------------
 - attempt_id (PK, INT, AUTO_INCREMENT)
-- student_id (FK, INT, NOT NULL)
+- user_id (FK, INT, NOT NULL)
 - exam_id (FK, INT, NOT NULL)
 - start_time (DATETIME, NOT NULL)
 - end_time (DATETIME)
 - status (ENUM('in_progress', 'completed', 'abandoned'), DEFAULT 'in_progress')
 - created_at (TIMESTAMP, DEFAULT CURRENT_TIMESTAMP)
 
-Foreign Key: student_id REFERENCES students(student_id) ON DELETE CASCADE
+Foreign Key: user_id REFERENCES users(user_id) ON DELETE CASCADE
 Foreign Key: exam_id REFERENCES exams(exam_id) ON DELETE CASCADE
 ```
 
@@ -91,9 +95,9 @@ Foreign Key: attempt_id REFERENCES attempts(attempt_id) ON DELETE CASCADE
 
 ## Relationships
 
-1. **Students to Attempts**: One-to-Many
-   - One student can have multiple attempts
-   - Each attempt belongs to one student
+1. **Users to Attempts**: One-to-Many
+   - One user (student) can have multiple attempts
+   - Each attempt belongs to one user
 
 2. **Exams to Questions**: One-to-Many
    - One exam can have multiple questions
@@ -119,16 +123,16 @@ Foreign Key: attempt_id REFERENCES attempts(attempt_id) ON DELETE CASCADE
 
 ```
 ┌─────────────┐       ┌─────────────┐       ┌─────────────┐
-│  students   │       │   exams     │       │  questions  │
+│    users    │       │   exams     │       │  questions  │
 ├─────────────┤       ├─────────────┤       ├─────────────┤
-│ student_id ◄┼───────┤ exam_id     │───────►│ question_id │
+│ user_id   ◄┼───────┤ exam_id     │───────►│ question_id │
 │ full_name   │       │ exam_title  │       │ exam_id     │
 │ email       │       │ duration    │       │ question_   │
 │ password    │       │ total_marks │       │   text      │
-└─────────────┘       │ passing_    │       │ option_a    │
-                      │   marks     │       │ option_b    │
-                      └─────────────┘       │ option_c    │
-                            │               │ option_d    │
+│ role        │       │ passing_    │       │ option_a    │
+│ created_at  │       │   marks     │       │ option_b    │
+└─────────────┘       │ created_by  │       │ option_c    │
+                      └─────────────┘       │ option_d    │
                             │               │ correct_    │
                             │               │   answer    │
                             │               └─────────────┘
@@ -139,7 +143,7 @@ Foreign Key: attempt_id REFERENCES attempts(attempt_id) ON DELETE CASCADE
                       │  attempts   │               │
                       ├─────────────┤               │
                       │ attempt_id  │───────────────┘
-                      │ student_id  │
+                      │ user_id     │
                       │ exam_id     │
                       │ start_time  │
                       │ end_time    │
@@ -167,5 +171,6 @@ Foreign Key: attempt_id REFERENCES attempts(attempt_id) ON DELETE CASCADE
 3. **Password Storage**: Passwords will be hashed using bcrypt before storage
 4. **Status Enums**: Used for status fields to ensure data consistency
 5. **Timestamps**: All tables have created_at timestamps for audit purposes
-6. **Unique Constraints**: Email is unique in students table; attempt_id is unique in results table
+6. **Unique Constraints**: Email is unique in users table; attempt_id is unique in results table
 7. **Separation of Concerns**: Answers and Results are separated to allow detailed answer tracking
+8. **Role-based Access**: Users table supports admin, teacher, and student roles

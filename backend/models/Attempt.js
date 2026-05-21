@@ -1,10 +1,10 @@
 const db = require('../config/db');
 
 class Attempt {
-  static async create(studentId, examId) {
+  static async create(userId, examId) {
     const [result] = await db.execute(
-      'INSERT INTO attempts (student_id, exam_id, start_time) VALUES (?, ?, NOW())',
-      [studentId, examId]
+      'INSERT INTO attempts (user_id, exam_id, start_time) VALUES (?, ?, NOW())',
+      [userId, examId]
     );
     return result.insertId;
   }
@@ -17,10 +17,10 @@ class Attempt {
     return rows[0];
   }
 
-  static async getByStudentId(studentId) {
+  static async getByUserId(userId) {
     const [rows] = await db.execute(
-      'SELECT a.*, e.exam_title FROM attempts a JOIN exams e ON a.exam_id = e.exam_id WHERE a.student_id = ? ORDER BY a.created_at DESC',
-      [studentId]
+      'SELECT a.*, e.exam_title FROM attempts a JOIN exams e ON a.exam_id = e.exam_id WHERE a.user_id = ? ORDER BY a.created_at DESC',
+      [userId]
     );
     return rows;
   }
@@ -40,10 +40,10 @@ class Attempt {
     );
   }
 
-  static async getInProgressAttempt(studentId, examId) {
+  static async getInProgressAttempt(userId, examId) {
     const [rows] = await db.execute(
-      'SELECT * FROM attempts WHERE student_id = ? AND exam_id = ? AND status = "in_progress"',
-      [studentId, examId]
+      'SELECT * FROM attempts WHERE user_id = ? AND exam_id = ? AND status = "in_progress"',
+      [userId, examId]
     );
     return rows[0];
   }

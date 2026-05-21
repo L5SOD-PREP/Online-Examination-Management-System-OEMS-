@@ -1,6 +1,6 @@
 const Result = require('../models/Result');
 const Attempt = require('../models/Attempt');
-const Student = require('../models/Student');
+const User = require('../models/User');
 const Exam = require('../models/Exam');
 
 const getStudentPerformanceReport = async (req, res) => {
@@ -8,7 +8,7 @@ const getStudentPerformanceReport = async (req, res) => {
     const { studentId } = req.params;
 
     const results = await Result.getByStudentId(studentId);
-    const student = await Student.findById(studentId);
+    const student = await User.findById(studentId);
 
     const totalAttempts = results.length;
     const passedAttempts = results.filter(r => r.status === 'pass').length;
@@ -19,7 +19,7 @@ const getStudentPerformanceReport = async (req, res) => {
 
     res.json({
       student: {
-        studentId: student.student_id,
+        studentId: student.user_id,
         fullName: student.full_name,
         email: student.email
       },

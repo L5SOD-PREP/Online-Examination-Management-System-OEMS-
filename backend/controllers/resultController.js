@@ -2,7 +2,7 @@ const Result = require('../models/Result');
 
 const getStudentResults = async (req, res) => {
   try {
-    const studentId = req.session.studentId;
+    const studentId = req.session.userId;
     const results = await Result.getByStudentId(studentId);
     res.json(results);
   } catch (error) {
