@@ -11,6 +11,7 @@ import Results from './pages/Results';
 import QuestionManagement from './pages/QuestionManagement';
 import ExamManagement from './pages/ExamManagement';
 import Reports from './pages/Reports';
+import UserManagement from './pages/UserManagement';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -106,6 +107,11 @@ function App() {
         <Route path="/reports" element={
           <RoleProtectedRoute allowedRoles={['admin', 'teacher']}>
             <Reports />
+          </RoleProtectedRoute>
+        } />
+        <Route path="/users" element={
+          <RoleProtectedRoute allowedRoles={['admin', 'teacher']}>
+            <UserManagement />
           </RoleProtectedRoute>
         } />
       </Routes>

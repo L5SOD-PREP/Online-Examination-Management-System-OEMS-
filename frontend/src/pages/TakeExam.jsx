@@ -1,10 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getExamById } from '../api/exams';
 import { getQuestionsByExam } from '../api/questions';
 import { startAttempt, submitAnswer, submitExam } from '../api/attempts';
 import { useAuth } from '../context/AuthContext';
 import { logout as logoutApi } from '../api/auth';
+
+const shuffleArray = (array) => {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+};
 
 const TakeExam = () => {
   const { examId } = useParams();
@@ -18,6 +27,25 @@ const TakeExam = () => {
   const [timeRemaining, setTimeRemaining] = useState(0);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const submittingRef = useRef(false);
+  const fullscreenRef = useRef(false);
+
+  const handleSubmitExam = useCallback(async () => {
+    if (submittingRef.current) return;
+    submittingRef.current = true;
+    setSubmitting(true);
+    try {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+      }
+      const result = await submitExam(attemptId);
+      navigate('/results', { state: { result } });
+    } catch (error) {
+      console.error('Failed to submit exam:', error);
+      submittingRef.current = false;
+      setSubmitting(false);
+    }
+  }, [attemptId, navigate]);
 
   useEffect(() => {
     initializeExam();
@@ -37,7 +65,40 @@ const TakeExam = () => {
       }, 1000);
     }
     return () => clearInterval(timer);
-  }, [timeRemaining, submitting]);
+  }, [timeRemaining, submitting, handleSubmitExam]);
+
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (document.hidden && attemptId && !submittingRef.current) {
+        handleSubmitExam();
+      }
+    };
+
+    const handleBlur = () => {
+      if (attemptId && !submittingRef.current) {
+        handleSubmitExam();
+      }
+    };
+
+    const handleFullscreenChange = () => {
+      if (!document.fullscreenElement && attemptId && fullscreenRef.current && !submittingRef.current) {
+        handleSubmitExam();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibility);
+    window.addEventListener('blur', handleBlur);
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibility);
+      window.removeEventListener('blur', handleBlur);
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      }
+    };
+  }, [attemptId, handleSubmitExam]);
 
   const initializeExam = async () => {
     try {
@@ -45,12 +106,19 @@ const TakeExam = () => {
       setExam(examData);
       
       const questionsData = await getQuestionsByExam(examId);
-      setQuestions(questionsData);
+      setQuestions(shuffleArray(questionsData));
       
       const attempt = await startAttempt(examId);
       setAttemptId(attempt.attemptId);
       
       setTimeRemaining(examData.duration * 60);
+
+      try {
+        await document.documentElement.requestFullscreen();
+        fullscreenRef.current = true;
+      } catch {
+        fullscreenRef.current = false;
+      }
     } catch (error) {
       console.error('Failed to initialize exam:', error);
     } finally {
@@ -80,19 +148,6 @@ const TakeExam = () => {
   const handlePreviousQuestion = () => {
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex((prev) => prev - 1);
-    }
-  };
-
-  const handleSubmitExam = async () => {
-    if (submitting) return;
-    setSubmitting(true);
-
-    try {
-      const result = await submitExam(attemptId);
-      navigate('/results', { state: { result } });
-    } catch (error) {
-      console.error('Failed to submit exam:', error);
-      setSubmitting(false);
     }
   };
 
@@ -134,7 +189,7 @@ const TakeExam = () => {
     <div className="min-h-screen bg-neutral-50 flex">
       {/* Sidebar */}
       <div className="w-64 bg-primary-800 text-white flex flex-col fixed h-full">
-        <div className="p-6 border-b border-primary-700">
+        <div className="p-6 border-b border-white/10">
           <h1 className="text-xl font-bold">Online Examination System</h1>
         </div>
         
@@ -151,7 +206,7 @@ const TakeExam = () => {
             <li>
               <button
                 onClick={() => navigate('/exams')}
-                className="w-full text-left px-4 py-3 rounded-lg bg-primary-700 hover:bg-primary-600 transition font-medium"
+                className="w-full text-left px-4 py-3 rounded-lg bg-primary-600 hover:bg-primary-500 transition font-medium"
               >
                 Available Exams
               </button>
@@ -190,16 +245,24 @@ const TakeExam = () => {
                     Reports
                   </button>
                 </li>
+                <li>
+                  <button
+                    onClick={() => navigate('/users')}
+                    className="w-full text-left px-4 py-3 rounded-lg hover:bg-primary-600 transition font-medium"
+                  >
+                    User Management
+                  </button>
+                </li>
               </>
             )}
           </ul>
         </nav>
 
-        <div className="p-4 border-t border-primary-700">
+        <div className="p-4 border-t border-white/10">
           <div className="mb-4">
-            <p className="text-sm text-primary-200">Welcome,</p>
+            <p className="text-sm text-white/70">Welcome,</p>
             <p className="font-semibold">{user?.fullName}</p>
-            <p className="text-xs text-primary-300 capitalize">{user?.role}</p>
+            <p className="text-xs text-white/50 capitalize">{user?.role}</p>
           </div>
           <button
             onClick={handleLogout}

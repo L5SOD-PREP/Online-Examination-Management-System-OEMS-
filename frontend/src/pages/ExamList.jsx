@@ -43,7 +43,7 @@ const ExamList = () => {
     <div className="min-h-screen bg-neutral-50 flex">
       {/* Sidebar */}
       <div className="w-64 bg-primary-800 text-white flex flex-col fixed h-full">
-        <div className="p-6 border-b border-primary-700">
+        <div className="p-6 border-b border-white/10">
           <h1 className="text-xl font-bold">Online Examination System</h1>
         </div>
         
@@ -60,7 +60,7 @@ const ExamList = () => {
             <li>
               <button
                 onClick={() => navigate('/exams')}
-                className="w-full text-left px-4 py-3 rounded-lg bg-primary-700 hover:bg-primary-600 transition font-medium"
+                className="w-full text-left px-4 py-3 rounded-lg bg-primary-600 hover:bg-primary-500 transition font-medium"
               >
                 Available Exams
               </button>
@@ -99,16 +99,24 @@ const ExamList = () => {
                     Reports
                   </button>
                 </li>
+                <li>
+                  <button
+                    onClick={() => navigate('/users')}
+                    className="w-full text-left px-4 py-3 rounded-lg hover:bg-primary-600 transition font-medium"
+                  >
+                    User Management
+                  </button>
+                </li>
               </>
             )}
           </ul>
         </nav>
 
-        <div className="p-4 border-t border-primary-700">
+        <div className="p-4 border-t border-white/10">
           <div className="mb-4">
-            <p className="text-sm text-primary-200">Welcome,</p>
+            <p className="text-sm text-white/70">Welcome,</p>
             <p className="font-semibold">{user?.fullName}</p>
-            <p className="text-xs text-primary-300 capitalize">{user?.role}</p>
+            <p className="text-xs text-white/50 capitalize">{user?.role}</p>
           </div>
           <button
             onClick={handleLogout}
