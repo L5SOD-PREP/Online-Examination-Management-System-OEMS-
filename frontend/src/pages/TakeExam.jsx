@@ -30,6 +30,8 @@ const TakeExam = () => {
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [showRules, setShowRules] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [initFailed, setInitFailed] = useState(false);
   const submittingRef = useRef(false);
   const fullscreenRef = useRef(false);
 
@@ -142,7 +144,11 @@ const TakeExam = () => {
       
       setTimeRemaining(examData.duration * 60);
     } catch (error) {
-      console.error('Failed to initialize exam:', error.response?.data?.error || error.message);
+      const msg = error.response?.data?.error || error.message || 'Unknown error';
+      console.error('Failed to initialize exam:', error);
+      setErrorMessage(msg);
+      setInitFailed(true);
+      showToast(msg, 'error');
       setExam(null);
     } finally {
       setLoading(false);
@@ -194,32 +200,6 @@ const TakeExam = () => {
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-neutral-50">
-        <p className="text-neutral-600">Loading exam...</p>
-      </div>
-    );
-  }
-
-  if (!exam || questions.length === 0) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-neutral-50">
-        <div className="text-center">
-          <p className="text-red-600 mb-4">Failed to load exam. You may have already completed it.</p>
-          <button
-            onClick={() => navigate('/exams')}
-            className="px-6 py-3 bg-primary-600 text-white rounded-lg font-semibold hover:bg-primary-700 transition"
-          >
-            Back to Exams
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  const currentQuestion = questions[currentQuestionIndex];
 
   const sidebar = (
     <div className="w-64 bg-primary-800 text-white flex flex-col fixed h-full">
@@ -308,100 +288,147 @@ const TakeExam = () => {
     </div>
   );
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-neutral-50">
+        <p className="text-neutral-600">Loading exam...</p>
+      </div>
+    );
+  }
+
+  if (initFailed) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-neutral-50">
+        <div className="text-center">
+          <p className="text-red-600 mb-2 font-semibold">Failed to load exam.</p>
+          <p className="text-red-500 mb-4 text-sm">{errorMessage}</p>
+          <p className="text-neutral-400 text-xs mb-4">Exam ID: {examId}</p>
+          <button
+            onClick={() => navigate('/exams')}
+            className="px-6 py-3 bg-primary-600 text-white rounded-lg font-semibold hover:bg-primary-700 transition"
+          >
+            Back to Exams
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!exam && !showRules) {
+    return null;
+  }
+
+  const currentQuestion = questions.length > 0 ? questions[currentQuestionIndex] : null;
+
   return (
     <div className="min-h-screen bg-neutral-50 flex">
       {sidebar}
 
       {/* Main Content */}
       <div className="flex-1 ml-64">
-        <div className="p-8">
-          <div className="bg-white rounded-lg shadow-md p-8 mb-6">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-neutral-900">
-                {exam.exam_title}
-              </h2>
-              <div className="flex items-center space-x-4">
-                <span className="text-neutral-600">Question {currentQuestionIndex + 1} of {questions.length}</span>
-                <div className={`px-4 py-2 rounded-lg font-bold ${
-                  timeRemaining < 300 ? 'bg-red-500 text-white' : 'bg-primary-600 text-white'
-                }`}>
-                  {formatTime(timeRemaining)}
+        {exam && questions.length > 0 ? (
+          <div className="p-8">
+            <div className="bg-white rounded-lg shadow-md p-8 mb-6">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-neutral-900">
+                  {exam.exam_title}
+                </h2>
+                <div className="flex items-center space-x-4">
+                  <span className="text-neutral-600">Question {currentQuestionIndex + 1} of {questions.length}</span>
+                  <div className={`px-4 py-2 rounded-lg font-bold ${
+                    timeRemaining < 300 ? 'bg-red-500 text-white' : 'bg-primary-600 text-white'
+                  }`}>
+                    {formatTime(timeRemaining)}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mb-8">
+                <p className="text-lg text-neutral-700 mb-6">
+                  {currentQuestionIndex + 1}. {currentQuestion.question_text}
+                </p>
+
+                <div className="space-y-4">
+                  {['A', 'B', 'C', 'D'].map((option) => (
+                    <button
+                      key={option}
+                      onClick={() => handleAnswerSelect(currentQuestion.question_id, option)}
+                      className={`w-full text-left p-4 rounded-lg border-2 transition ${
+                        answers[currentQuestion.question_id] === option
+                          ? 'border-primary-500 bg-primary-50'
+                          : 'border-neutral-200 hover:border-primary-300'
+                      }`}
+                    >
+                      <span className="font-semibold mr-4">{option}.</span>
+                      {currentQuestion[`option_${option.toLowerCase()}`]}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center mb-8">
+                <button
+                  onClick={handlePreviousQuestion}
+                  disabled={currentQuestionIndex === 0}
+                  className="px-6 py-3 bg-primary-600 text-white rounded-lg font-semibold hover:bg-primary-700 transition disabled:opacity-50"
+                >
+                  Previous
+                </button>
+
+                {currentQuestionIndex === questions.length - 1 ? (
+                  <button
+                    onClick={handleSubmitExam}
+                    disabled={submitting}
+                    className="px-6 py-3 bg-accent-600 text-white rounded-lg font-semibold hover:bg-accent-700 transition disabled:opacity-50"
+                  >
+                    {submitting ? 'Submitting...' : 'Submit Exam'}
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleNextQuestion}
+                    className="px-6 py-3 bg-primary-600 text-white rounded-lg font-semibold hover:bg-primary-700 transition"
+                  >
+                    Next
+                  </button>
+                )}
+              </div>
+
+              <div>
+                <h3 className="text-lg font-semibold text-neutral-900 mb-4">Question Navigation</h3>
+                <div className="flex flex-wrap gap-2">
+                  {questions.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentQuestionIndex(index)}
+                      className={`w-10 h-10 rounded-lg font-semibold transition ${
+                        currentQuestionIndex === index
+                          ? 'bg-primary-600 text-white'
+                          : answers[questions[index].question_id]
+                          ? 'bg-accent-500 text-white'
+                          : 'bg-primary-200 text-neutral-700 hover:bg-primary-300'
+                      }`}
+                    >
+                      {index + 1}
+                    </button>
+                  ))}
                 </div>
               </div>
             </div>
-
-            <div className="mb-8">
-              <p className="text-lg text-neutral-700 mb-6">
-                {currentQuestionIndex + 1}. {currentQuestion.question_text}
-              </p>
-
-              <div className="space-y-4">
-                {['A', 'B', 'C', 'D'].map((option) => (
-                  <button
-                    key={option}
-                    onClick={() => handleAnswerSelect(currentQuestion.question_id, option)}
-                    className={`w-full text-left p-4 rounded-lg border-2 transition ${
-                      answers[currentQuestion.question_id] === option
-                        ? 'border-primary-500 bg-primary-50'
-                        : 'border-neutral-200 hover:border-primary-300'
-                    }`}
-                  >
-                    <span className="font-semibold mr-4">{option}.</span>
-                    {currentQuestion[`option_${option.toLowerCase()}`]}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex justify-between items-center mb-8">
+          </div>
+        ) : exam ? (
+          <div className="p-8">
+            <div className="bg-white rounded-lg shadow-md p-8 text-center">
+              <h2 className="text-2xl font-bold text-neutral-900 mb-4">{exam.exam_title}</h2>
+              <p className="text-neutral-500">This exam has no questions yet. Please contact your instructor.</p>
               <button
-                onClick={handlePreviousQuestion}
-                disabled={currentQuestionIndex === 0}
-                className="px-6 py-3 bg-primary-600 text-white rounded-lg font-semibold hover:bg-primary-700 transition disabled:opacity-50"
+                onClick={() => navigate('/exams')}
+                className="mt-6 px-6 py-3 bg-primary-600 text-white rounded-lg font-semibold hover:bg-primary-700 transition"
               >
-                Previous
+                Back to Exams
               </button>
-
-              {currentQuestionIndex === questions.length - 1 ? (
-                <button
-                  onClick={handleSubmitExam}
-                  disabled={submitting}
-                  className="px-6 py-3 bg-accent-600 text-white rounded-lg font-semibold hover:bg-accent-700 transition disabled:opacity-50"
-                >
-                  {submitting ? 'Submitting...' : 'Submit Exam'}
-                </button>
-              ) : (
-                <button
-                  onClick={handleNextQuestion}
-                  className="px-6 py-3 bg-primary-600 text-white rounded-lg font-semibold hover:bg-primary-700 transition"
-                >
-                  Next
-                </button>
-              )}
-            </div>
-
-            <div>
-              <h3 className="text-lg font-semibold text-neutral-900 mb-4">Question Navigation</h3>
-              <div className="flex flex-wrap gap-2">
-                {questions.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => setCurrentQuestionIndex(index)}
-                    className={`w-10 h-10 rounded-lg font-semibold transition ${
-                      currentQuestionIndex === index
-                        ? 'bg-primary-600 text-white'
-                        : answers[questions[index].question_id]
-                        ? 'bg-accent-500 text-white'
-                        : 'bg-primary-200 text-neutral-700 hover:bg-primary-300'
-                    }`}
-                  >
-                    {index + 1}
-                  </button>
-                ))}
-              </div>
             </div>
           </div>
-        </div>
+        ) : null}
       </div>
 
       {/* Rules Modal Overlay */}

@@ -40,7 +40,7 @@ const Reports = () => {
     try {
       let data;
       if (reportType === 'performance') {
-        data = await getStudentPerformanceReport(user.studentId);
+        data = await getStudentPerformanceReport(user.userId);
       } else if (reportType === 'passfail') {
         data = await getPassFailReport(selectedExam);
       } else if (reportType === 'exam') {

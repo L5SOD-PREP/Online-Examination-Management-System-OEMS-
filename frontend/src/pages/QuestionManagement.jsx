@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { getAllExams } from '../api/exams';
-import { getQuestionsByExam, createQuestion, deleteQuestion } from '../api/questions';
+import { getQuestionsByExam, createQuestion, updateQuestion, deleteQuestion } from '../api/questions';
 import { useAuth } from '../context/AuthContext';
 import { logout as logoutApi } from '../api/auth';
 
@@ -13,6 +13,7 @@ const QuestionManagement = () => {
   const [selectedExam, setSelectedExam] = useState(location.state?.examId || null);
   const [questions, setQuestions] = useState([]);
   const [showForm, setShowForm] = useState(false);
+  const [editingQuestion, setEditingQuestion] = useState(null);
   const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
     questionText: '',
@@ -54,26 +55,52 @@ const QuestionManagement = () => {
     }
   };
 
-  const handleCreateQuestion = async (e) => {
+  const resetForm = () => {
+    setShowForm(false);
+    setEditingQuestion(null);
+    setFormData({
+      questionText: '',
+      optionA: '',
+      optionB: '',
+      optionC: '',
+      optionD: '',
+      correctAnswer: 'A',
+      marks: 1
+    });
+  };
+
+  const handleEditClick = (question) => {
+    setEditingQuestion(question);
+    setFormData({
+      questionText: question.question_text,
+      optionA: question.option_a,
+      optionB: question.option_b,
+      optionC: question.option_c,
+      optionD: question.option_d,
+      correctAnswer: question.correct_answer,
+      marks: question.marks
+    });
+    setShowForm(true);
+  };
+
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
-      await createQuestion({
-        examId: selectedExam,
-        ...formData
-      });
-      setShowForm(false);
-      setFormData({
-        questionText: '',
-        optionA: '',
-        optionB: '',
-        optionC: '',
-        optionD: '',
-        correctAnswer: 'A',
-        marks: 1
-      });
+      if (editingQuestion) {
+        await updateQuestion(editingQuestion.question_id, {
+          examId: selectedExam,
+          ...formData
+        });
+      } else {
+        await createQuestion({
+          examId: selectedExam,
+          ...formData
+        });
+      }
+      resetForm();
       fetchQuestions(selectedExam);
     } catch (error) {
-      console.error('Failed to create question:', error);
+      console.error('Failed to save question:', error);
     }
   };
 
@@ -223,7 +250,7 @@ const QuestionManagement = () => {
                 </div>
 
                 {showForm && (
-                  <form onSubmit={handleCreateQuestion} className="space-y-4 mb-6 p-4 bg-neutral-50 rounded-lg">
+                  <form onSubmit={handleFormSubmit} className="space-y-4 mb-6 p-4 bg-neutral-50 rounded-lg">
                     <div>
                       <label className="block text-neutral-700 text-sm font-bold mb-2">
                         Question Text
@@ -307,12 +334,23 @@ const QuestionManagement = () => {
                       </div>
                     </div>
 
-                    <button
-                      type="submit"
-                      className="w-full bg-accent-600 text-white py-3 rounded-lg font-semibold hover:bg-accent-700 transition"
-                    >
-                      Add Question
-                    </button>
+                    <div className="flex space-x-4">
+                      <button
+                        type="submit"
+                        className="flex-1 bg-accent-600 text-white py-3 rounded-lg font-semibold hover:bg-accent-700 transition"
+                      >
+                        {editingQuestion ? 'Update Question' : 'Add Question'}
+                      </button>
+                      {editingQuestion && (
+                        <button
+                          type="button"
+                          onClick={resetForm}
+                          className="px-6 py-3 bg-neutral-300 text-neutral-700 rounded-lg font-semibold hover:bg-neutral-400 transition"
+                        >
+                          Cancel
+                        </button>
+                      )}
+                    </div>
                   </form>
                 )}
 
@@ -326,12 +364,20 @@ const QuestionManagement = () => {
                           <h4 className="font-semibold text-neutral-900">
                             {index + 1}. {question.question_text}
                           </h4>
-                          <button
-                            onClick={() => handleDeleteQuestion(question.question_id)}
-                            className="text-red-600 hover:text-red-800"
-                          >
-                            Delete
-                          </button>
+                          <div className="flex space-x-3">
+                            <button
+                              onClick={() => handleEditClick(question)}
+                              className="text-primary-600 hover:text-primary-800"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={() => handleDeleteQuestion(question.question_id)}
+                              className="text-red-600 hover:text-red-800"
+                            >
+                              Delete
+                            </button>
+                          </div>
                         </div>
                         <div className="grid grid-cols-2 gap-2 text-sm">
                           <div className={`p-2 rounded ${question.correct_answer === 'A' ? 'bg-accent-100' : 'bg-primary-50'}`}>
