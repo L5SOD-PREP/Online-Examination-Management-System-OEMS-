@@ -99,10 +99,10 @@ const QuestionManagement = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-neutral-50 flex">
       {/* Sidebar */}
-      <div className="w-64 bg-blue-900 text-white flex flex-col fixed h-full">
-        <div className="p-6 border-b border-blue-800">
+      <div className="w-64 bg-primary-800 text-white flex flex-col fixed h-full">
+        <div className="p-6 border-b border-primary-700">
           <h1 className="text-xl font-bold">Online Examination System</h1>
         </div>
         
@@ -111,7 +111,7 @@ const QuestionManagement = () => {
             <li>
               <button
                 onClick={() => navigate('/dashboard')}
-                className="w-full text-left px-4 py-3 rounded-lg hover:bg-blue-700 transition font-medium"
+                className="w-full text-left px-4 py-3 rounded-lg hover:bg-primary-600 transition font-medium"
               >
                 Dashboard
               </button>
@@ -119,7 +119,7 @@ const QuestionManagement = () => {
             <li>
               <button
                 onClick={() => navigate('/exams')}
-                className="w-full text-left px-4 py-3 rounded-lg hover:bg-blue-700 transition font-medium"
+                className="w-full text-left px-4 py-3 rounded-lg hover:bg-primary-600 transition font-medium"
               >
                 Available Exams
               </button>
@@ -127,7 +127,7 @@ const QuestionManagement = () => {
             <li>
               <button
                 onClick={() => navigate('/results')}
-                className="w-full text-left px-4 py-3 rounded-lg hover:bg-blue-700 transition font-medium"
+                className="w-full text-left px-4 py-3 rounded-lg hover:bg-primary-600 transition font-medium"
               >
                 My Results
               </button>
@@ -137,7 +137,7 @@ const QuestionManagement = () => {
                 <li>
                   <button
                     onClick={() => navigate('/exam-management')}
-                    className="w-full text-left px-4 py-3 rounded-lg hover:bg-blue-700 transition font-medium"
+                    className="w-full text-left px-4 py-3 rounded-lg hover:bg-primary-600 transition font-medium"
                   >
                     Exam Management
                   </button>
@@ -145,7 +145,7 @@ const QuestionManagement = () => {
                 <li>
                   <button
                     onClick={() => navigate('/questions')}
-                    className="w-full text-left px-4 py-3 rounded-lg bg-blue-800 hover:bg-blue-700 transition font-medium"
+                    className="w-full text-left px-4 py-3 rounded-lg bg-primary-700 hover:bg-primary-600 transition font-medium"
                   >
                     Question Management
                   </button>
@@ -153,7 +153,7 @@ const QuestionManagement = () => {
                 <li>
                   <button
                     onClick={() => navigate('/reports')}
-                    className="w-full text-left px-4 py-3 rounded-lg hover:bg-blue-700 transition font-medium"
+                    className="w-full text-left px-4 py-3 rounded-lg hover:bg-primary-600 transition font-medium"
                   >
                     Reports
                   </button>
@@ -163,15 +163,15 @@ const QuestionManagement = () => {
           </ul>
         </nav>
 
-        <div className="p-4 border-t border-blue-800">
+        <div className="p-4 border-t border-primary-700">
           <div className="mb-4">
-            <p className="text-sm text-blue-200">Welcome,</p>
+            <p className="text-sm text-primary-200">Welcome,</p>
             <p className="font-semibold">{user?.fullName}</p>
-            <p className="text-xs text-blue-300 capitalize">{user?.role}</p>
+            <p className="text-xs text-primary-300 capitalize">{user?.role}</p>
           </div>
           <button
             onClick={handleLogout}
-            className="w-full bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition font-medium"
+            className="w-full bg-accent-600 text-white px-4 py-2 rounded-lg hover:bg-accent-700 transition font-medium"
           >
             Logout
           </button>
@@ -181,14 +181,14 @@ const QuestionManagement = () => {
       {/* Main Content */}
       <div className="flex-1 ml-64">
         <div className="p-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8">Question Management</h2>
+          <h2 className="text-3xl font-bold text-neutral-900 mb-8">Question Management</h2>
 
           <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">Select Exam</h3>
+            <h3 className="text-xl font-semibold text-neutral-900 mb-4">Select Exam</h3>
             <select
               value={selectedExam || ''}
               onChange={(e) => setSelectedExam(parseInt(e.target.value))}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
               <option value="">Select an exam</option>
               {exams.map((exam) => (
@@ -203,27 +203,27 @@ const QuestionManagement = () => {
             <>
               <div className="bg-white rounded-lg shadow-md p-6 mb-6">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-xl font-semibold text-gray-900">
+                  <h3 className="text-xl font-semibold text-neutral-900">
                     Questions ({questions.length})
                   </h3>
                   <button
                     onClick={() => setShowForm(!showForm)}
-                    className="bg-blue-700 text-white px-4 py-2 rounded-lg hover:bg-blue-800 transition"
+                    className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition"
                   >
                     {showForm ? 'Cancel' : 'Add Question'}
                   </button>
                 </div>
 
                 {showForm && (
-                  <form onSubmit={handleCreateQuestion} className="space-y-4 mb-6 p-4 bg-gray-50 rounded-lg">
+                  <form onSubmit={handleCreateQuestion} className="space-y-4 mb-6 p-4 bg-neutral-50 rounded-lg">
                     <div>
-                      <label className="block text-gray-700 text-sm font-bold mb-2">
+                      <label className="block text-neutral-700 text-sm font-bold mb-2">
                         Question Text
                       </label>
                       <textarea
                         value={formData.questionText}
                         onChange={(e) => setFormData({ ...formData, questionText: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         rows="3"
                         required
                       />
@@ -231,42 +231,42 @@ const QuestionManagement = () => {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-gray-700 text-sm font-bold mb-2">Option A</label>
+                        <label className="block text-neutral-700 text-sm font-bold mb-2">Option A</label>
                         <input
                           type="text"
                           value={formData.optionA}
                           onChange={(e) => setFormData({ ...formData, optionA: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                           required
                         />
                       </div>
                       <div>
-                        <label className="block text-gray-700 text-sm font-bold mb-2">Option B</label>
+                        <label className="block text-neutral-700 text-sm font-bold mb-2">Option B</label>
                         <input
                           type="text"
                           value={formData.optionB}
                           onChange={(e) => setFormData({ ...formData, optionB: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                           required
                         />
                       </div>
                       <div>
-                        <label className="block text-gray-700 text-sm font-bold mb-2">Option C</label>
+                        <label className="block text-neutral-700 text-sm font-bold mb-2">Option C</label>
                         <input
                           type="text"
                           value={formData.optionC}
                           onChange={(e) => setFormData({ ...formData, optionC: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                           required
                         />
                       </div>
                       <div>
-                        <label className="block text-gray-700 text-sm font-bold mb-2">Option D</label>
+                        <label className="block text-neutral-700 text-sm font-bold mb-2">Option D</label>
                         <input
                           type="text"
                           value={formData.optionD}
                           onChange={(e) => setFormData({ ...formData, optionD: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                           required
                         />
                       </div>
@@ -274,11 +274,11 @@ const QuestionManagement = () => {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-gray-700 text-sm font-bold mb-2">Correct Answer</label>
+                        <label className="block text-neutral-700 text-sm font-bold mb-2">Correct Answer</label>
                         <select
                           value={formData.correctAnswer}
                           onChange={(e) => setFormData({ ...formData, correctAnswer: e.target.value })}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                         >
                           <option value="A">A</option>
                           <option value="B">B</option>
@@ -287,12 +287,12 @@ const QuestionManagement = () => {
                         </select>
                       </div>
                       <div>
-                        <label className="block text-gray-700 text-sm font-bold mb-2">Marks</label>
+                        <label className="block text-neutral-700 text-sm font-bold mb-2">Marks</label>
                         <input
                           type="number"
                           value={formData.marks}
                           onChange={(e) => setFormData({ ...formData, marks: parseInt(e.target.value) })}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
                           min="1"
                           required
                         />
@@ -301,7 +301,7 @@ const QuestionManagement = () => {
 
                     <button
                       type="submit"
-                      className="w-full bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition"
+                      className="w-full bg-accent-600 text-white py-3 rounded-lg font-semibold hover:bg-accent-700 transition"
                     >
                       Add Question
                     </button>
@@ -309,13 +309,13 @@ const QuestionManagement = () => {
                 )}
 
                 {questions.length === 0 ? (
-                  <p className="text-gray-600 text-center py-8">No questions added yet.</p>
+                  <p className="text-neutral-600 text-center py-8">No questions added yet.</p>
                 ) : (
                   <div className="space-y-4">
                     {questions.map((question, index) => (
-                      <div key={question.question_id} className="border border-gray-200 rounded-lg p-4">
+                      <div key={question.question_id} className="border border-neutral-200 rounded-lg p-4">
                         <div className="flex justify-between items-start mb-2">
-                          <h4 className="font-semibold text-gray-900">
+                          <h4 className="font-semibold text-neutral-900">
                             {index + 1}. {question.question_text}
                           </h4>
                           <button
@@ -326,20 +326,20 @@ const QuestionManagement = () => {
                           </button>
                         </div>
                         <div className="grid grid-cols-2 gap-2 text-sm">
-                          <div className={`p-2 rounded ${question.correct_answer === 'A' ? 'bg-purple-100' : 'bg-blue-50'}`}>
+                          <div className={`p-2 rounded ${question.correct_answer === 'A' ? 'bg-accent-100' : 'bg-primary-50'}`}>
                             A. {question.option_a}
                           </div>
-                          <div className={`p-2 rounded ${question.correct_answer === 'B' ? 'bg-purple-100' : 'bg-blue-50'}`}>
+                          <div className={`p-2 rounded ${question.correct_answer === 'B' ? 'bg-accent-100' : 'bg-primary-50'}`}>
                             B. {question.option_b}
                           </div>
-                          <div className={`p-2 rounded ${question.correct_answer === 'C' ? 'bg-purple-100' : 'bg-blue-50'}`}>
+                          <div className={`p-2 rounded ${question.correct_answer === 'C' ? 'bg-accent-100' : 'bg-primary-50'}`}>
                             C. {question.option_c}
                           </div>
-                          <div className={`p-2 rounded ${question.correct_answer === 'D' ? 'bg-purple-100' : 'bg-blue-50'}`}>
+                          <div className={`p-2 rounded ${question.correct_answer === 'D' ? 'bg-accent-100' : 'bg-primary-50'}`}>
                             D. {question.option_d}
                           </div>
                         </div>
-                        <p className="text-sm text-gray-600 mt-2">Marks: {question.marks}</p>
+                        <p className="text-sm text-neutral-600 mt-2">Marks: {question.marks}</p>
                       </div>
                     ))}
                   </div>
