@@ -41,9 +41,7 @@ const TakeExam = () => {
       const result = await submitExam(attemptId);
       navigate('/results', { state: { result } });
     } catch (error) {
-      console.error('Failed to submit exam:', error);
-      submittingRef.current = false;
-      setSubmitting(false);
+      console.error('Failed to submit exam:', error.response?.data?.error || error.message);
     }
   }, [attemptId, navigate]);
 
@@ -120,7 +118,8 @@ const TakeExam = () => {
         fullscreenRef.current = false;
       }
     } catch (error) {
-      console.error('Failed to initialize exam:', error);
+      console.error('Failed to initialize exam:', error.response?.data?.error || error.message);
+      setExam(null);
     } finally {
       setLoading(false);
     }
@@ -178,7 +177,15 @@ const TakeExam = () => {
   if (!exam || questions.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-neutral-50">
-        <p className="text-neutral-600">Exam not found or no questions available.</p>
+        <div className="text-center">
+          <p className="text-red-600 mb-4">Failed to load exam. You may have already completed it.</p>
+          <button
+            onClick={() => navigate('/exams')}
+            className="px-6 py-3 bg-primary-600 text-white rounded-lg font-semibold hover:bg-primary-700 transition"
+          >
+            Back to Exams
+          </button>
+        </div>
       </div>
     );
   }

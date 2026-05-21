@@ -124,7 +124,7 @@ const submitExam = async (req, res) => {
 const getStudentAttempts = async (req, res) => {
   try {
     const userId = req.session.userId;
-    const attempts = await Attempt.getByStudentId(userId);
+    const attempts = await Attempt.getByUserId(userId);
     res.json(attempts);
   } catch (error) {
     console.error('Get attempts error:', error);
