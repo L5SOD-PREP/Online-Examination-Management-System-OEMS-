@@ -4,6 +4,7 @@ import { getExamById } from '../api/exams';
 import { getQuestionsByExam } from '../api/questions';
 import { startAttempt, submitAnswer, submitExam } from '../api/attempts';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import { logout as logoutApi } from '../api/auth';
 
 const shuffleArray = (array) => {
@@ -19,14 +20,16 @@ const TakeExam = () => {
   const { examId } = useParams();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { showToast } = useToast();
   const [exam, setExam] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState({});
   const [attemptId, setAttemptId] = useState(null);
   const [timeRemaining, setTimeRemaining] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [showRules, setShowRules] = useState(true);
   const submittingRef = useRef(false);
   const fullscreenRef = useRef(false);
 
@@ -46,8 +49,10 @@ const TakeExam = () => {
   }, [attemptId, navigate]);
 
   useEffect(() => {
-    initializeExam();
-  }, [examId]);
+    if (!showRules) {
+      initializeExam();
+    }
+  }, [showRules]);
 
   useEffect(() => {
     let timer;
@@ -84,14 +89,33 @@ const TakeExam = () => {
       }
     };
 
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && attemptId && !submittingRef.current) {
+        e.preventDefault();
+        e.stopPropagation();
+        handleSubmitExam();
+      }
+    };
+
+    const handleBeforeUnload = (e) => {
+      if (attemptId && !submittingRef.current) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+
     document.addEventListener('visibilitychange', handleVisibility);
     window.addEventListener('blur', handleBlur);
     document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('keydown', handleKeyDown, true);
+    window.addEventListener('beforeunload', handleBeforeUnload);
 
     return () => {
       document.removeEventListener('visibilitychange', handleVisibility);
       window.removeEventListener('blur', handleBlur);
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('keydown', handleKeyDown, true);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
       if (document.fullscreenElement) {
         document.exitFullscreen();
       }
@@ -100,6 +124,13 @@ const TakeExam = () => {
 
   const initializeExam = async () => {
     try {
+      try {
+        await document.documentElement.requestFullscreen();
+        fullscreenRef.current = true;
+      } catch {
+        fullscreenRef.current = false;
+      }
+
       const examData = await getExamById(examId);
       setExam(examData);
       
@@ -110,13 +141,6 @@ const TakeExam = () => {
       setAttemptId(attempt.attemptId);
       
       setTimeRemaining(examData.duration * 60);
-
-      try {
-        await document.documentElement.requestFullscreen();
-        fullscreenRef.current = true;
-      } catch {
-        fullscreenRef.current = false;
-      }
     } catch (error) {
       console.error('Failed to initialize exam:', error.response?.data?.error || error.message);
       setExam(null);
@@ -160,6 +184,11 @@ const TakeExam = () => {
     }
   };
 
+  const handleStartExam = () => {
+    setShowRules(false);
+    setLoading(true);
+  };
+
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -192,93 +221,96 @@ const TakeExam = () => {
 
   const currentQuestion = questions[currentQuestionIndex];
 
+  const sidebar = (
+    <div className="w-64 bg-primary-800 text-white flex flex-col fixed h-full">
+      <div className="p-6 border-b border-white/10">
+        <h1 className="text-xl font-bold">Online Examination System</h1>
+      </div>
+      
+      <nav className="flex-1 p-4">
+        <ul className="space-y-2">
+          <li>
+            <button
+              onClick={() => navigate('/dashboard')}
+              className="w-full text-left px-4 py-3 rounded-lg hover:bg-primary-600 transition font-medium"
+            >
+              Dashboard
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => navigate('/exams')}
+              className="w-full text-left px-4 py-3 rounded-lg bg-primary-600 hover:bg-primary-500 transition font-medium"
+            >
+              Available Exams
+            </button>
+          </li>
+          <li>
+            <button
+              onClick={() => navigate('/results')}
+              className="w-full text-left px-4 py-3 rounded-lg hover:bg-primary-600 transition font-medium"
+            >
+              My Results
+            </button>
+          </li>
+          {(user?.role === 'admin' || user?.role === 'teacher') && (
+            <>
+              <li>
+                <button
+                  onClick={() => navigate('/exam-management')}
+                  className="w-full text-left px-4 py-3 rounded-lg hover:bg-primary-600 transition font-medium"
+                >
+                  Exam Management
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => navigate('/questions')}
+                  className="w-full text-left px-4 py-3 rounded-lg hover:bg-primary-600 transition font-medium"
+                >
+                  Question Management
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => navigate('/reports')}
+                  className="w-full text-left px-4 py-3 rounded-lg hover:bg-primary-600 transition font-medium"
+                >
+                  Reports
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => navigate('/users')}
+                  className="w-full text-left px-4 py-3 rounded-lg hover:bg-primary-600 transition font-medium"
+                >
+                  User Management
+                </button>
+              </li>
+            </>
+          )}
+        </ul>
+      </nav>
+
+      <div className="p-4 border-t border-white/10">
+        <div className="mb-4">
+          <p className="text-sm text-white/70">Welcome,</p>
+          <p className="font-semibold">{user?.fullName}</p>
+          <p className="text-xs text-white/50 capitalize">{user?.role}</p>
+        </div>
+        <button
+          onClick={handleLogout}
+          className="w-full bg-accent-600 text-white px-4 py-2 rounded-lg hover:bg-accent-700 transition font-medium"
+        >
+          Logout
+        </button>
+      </div>
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-neutral-50 flex">
-      {/* Sidebar */}
-      <div className="w-64 bg-primary-800 text-white flex flex-col fixed h-full">
-        <div className="p-6 border-b border-white/10">
-          <h1 className="text-xl font-bold">Online Examination System</h1>
-        </div>
-        
-        <nav className="flex-1 p-4">
-          <ul className="space-y-2">
-            <li>
-              <button
-                onClick={() => navigate('/dashboard')}
-                className="w-full text-left px-4 py-3 rounded-lg hover:bg-primary-600 transition font-medium"
-              >
-                Dashboard
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => navigate('/exams')}
-                className="w-full text-left px-4 py-3 rounded-lg bg-primary-600 hover:bg-primary-500 transition font-medium"
-              >
-                Available Exams
-              </button>
-            </li>
-            <li>
-              <button
-                onClick={() => navigate('/results')}
-                className="w-full text-left px-4 py-3 rounded-lg hover:bg-primary-600 transition font-medium"
-              >
-                My Results
-              </button>
-            </li>
-            {(user?.role === 'admin' || user?.role === 'teacher') && (
-              <>
-                <li>
-                  <button
-                    onClick={() => navigate('/exam-management')}
-                    className="w-full text-left px-4 py-3 rounded-lg hover:bg-primary-600 transition font-medium"
-                  >
-                    Exam Management
-                  </button>
-                </li>
-                <li>
-                  <button
-                    onClick={() => navigate('/questions')}
-                    className="w-full text-left px-4 py-3 rounded-lg hover:bg-primary-600 transition font-medium"
-                  >
-                    Question Management
-                  </button>
-                </li>
-                <li>
-                  <button
-                    onClick={() => navigate('/reports')}
-                    className="w-full text-left px-4 py-3 rounded-lg hover:bg-primary-600 transition font-medium"
-                  >
-                    Reports
-                  </button>
-                </li>
-                <li>
-                  <button
-                    onClick={() => navigate('/users')}
-                    className="w-full text-left px-4 py-3 rounded-lg hover:bg-primary-600 transition font-medium"
-                  >
-                    User Management
-                  </button>
-                </li>
-              </>
-            )}
-          </ul>
-        </nav>
-
-        <div className="p-4 border-t border-white/10">
-          <div className="mb-4">
-            <p className="text-sm text-white/70">Welcome,</p>
-            <p className="font-semibold">{user?.fullName}</p>
-            <p className="text-xs text-white/50 capitalize">{user?.role}</p>
-          </div>
-          <button
-            onClick={handleLogout}
-            className="w-full bg-accent-600 text-white px-4 py-2 rounded-lg hover:bg-accent-700 transition font-medium"
-          >
-            Logout
-          </button>
-        </div>
-      </div>
+      {sidebar}
 
       {/* Main Content */}
       <div className="flex-1 ml-64">
@@ -371,6 +403,71 @@ const TakeExam = () => {
           </div>
         </div>
       </div>
+
+      {/* Rules Modal Overlay */}
+      {showRules && (
+        <div className="fixed inset-0 z-40 bg-black/50 flex items-center justify-center">
+          <div className="bg-white rounded-lg shadow-xl p-10 max-w-2xl w-full mx-4 animate-slide-in">
+            <div className="text-center mb-8">
+              <h1 className="text-3xl font-bold text-primary-700 mb-2">Exam Rules</h1>
+              <p className="text-neutral-500">Please read the following rules carefully before starting</p>
+            </div>
+
+            <div className="space-y-4 mb-8">
+              <div className="flex items-start space-x-3 p-4 bg-red-50 rounded-lg border border-red-200">
+                <span className="text-red-500 text-xl font-bold mt-0.5">!</span>
+                <div>
+                  <h3 className="font-semibold text-red-700">Strict Fullscreen Mode</h3>
+                  <p className="text-red-600 text-sm">This exam requires fullscreen mode. Pressing Escape or exiting fullscreen will automatically submit your exam.</p>
+                </div>
+              </div>
+
+              <div className="flex items-start space-x-3 p-4 bg-red-50 rounded-lg border border-red-200">
+                <span className="text-red-500 text-xl font-bold mt-0.5">!</span>
+                <div>
+                  <h3 className="font-semibold text-red-700">No Tab Switching</h3>
+                  <p className="text-red-600 text-sm">Switching tabs, opening other windows, or minimizing the browser will immediately submit your exam with your current answers.</p>
+                </div>
+              </div>
+
+              <div className="flex items-start space-x-3 p-4 bg-red-50 rounded-lg border border-red-200">
+                <span className="text-red-500 text-xl font-bold mt-0.5">!</span>
+                <div>
+                  <h3 className="font-semibold text-red-700">Automatic Submission</h3>
+                  <p className="text-red-600 text-sm">Any attempt to leave this page, close the browser, or navigate away will result in automatic exam submission.</p>
+                </div>
+              </div>
+
+              <div className="flex items-start space-x-3 p-4 bg-amber-50 rounded-lg border border-amber-200">
+                <span className="text-amber-500 text-xl font-bold mt-0.5">i</span>
+                <div>
+                  <h3 className="font-semibold text-amber-700">Randomized Questions</h3>
+                  <p className="text-amber-600 text-sm">Questions are presented in random order. Ensure you answer carefully as you cannot return to change answers after final submission.</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-4 mb-6 p-4 bg-primary-50 rounded-lg">
+              <input
+                id="agreeCheck"
+                type="checkbox"
+                className="w-5 h-5 text-primary-600 rounded focus:ring-primary-500"
+              />
+              <label htmlFor="agreeCheck" className="text-neutral-700 text-sm">
+                I have read and agree to the exam rules. I understand that any violation will result in automatic exam submission.
+              </label>
+            </div>
+
+            <button
+              id="startExamBtn"
+              onClick={handleStartExam}
+              className="w-full py-4 bg-primary-600 text-white rounded-lg font-bold text-lg hover:bg-primary-700 transition"
+            >
+              Start Exam
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

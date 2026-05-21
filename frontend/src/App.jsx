@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { ToastProvider } from './context/ToastContext';
 import Welcome from './pages/Welcome';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -62,6 +63,7 @@ const PublicRoute = ({ children }) => {
 function App() {
   return (
     <AuthProvider>
+      <ToastProvider>
       <Routes>
         <Route path="/" element={<Welcome />} />
         <Route path="/login" element={
@@ -115,6 +117,7 @@ function App() {
           </RoleProtectedRoute>
         } />
       </Routes>
+      </ToastProvider>
     </AuthProvider>
   );
 }

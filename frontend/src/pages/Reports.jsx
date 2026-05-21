@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import { getAllExams } from '../api/exams';
 import { getStudentPerformanceReport, getPassFailReport, getExamResultReport } from '../api/reports';
 import { logout as logoutApi } from '../api/auth';
@@ -8,6 +9,7 @@ import { logout as logoutApi } from '../api/auth';
 const Reports = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { showToast } = useToast();
   const [exams, setExams] = useState([]);
   const [selectedExam, setSelectedExam] = useState(null);
   const [reportType, setReportType] = useState('performance');
@@ -31,7 +33,7 @@ const Reports = () => {
 
   const handleGenerateReport = async () => {
     if (!selectedExam && reportType !== 'performance') {
-      alert('Please select an exam');
+      showToast('Please select an exam', 'error');
       return;
     }
 
