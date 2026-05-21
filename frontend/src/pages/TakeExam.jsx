@@ -114,16 +114,16 @@ const TakeExam = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <p className="text-gray-600">Loading exam...</p>
+      <div className="min-h-screen flex items-center justify-center bg-neutral-50">
+        <p className="text-neutral-600">Loading exam...</p>
       </div>
     );
   }
 
   if (!exam || questions.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <p className="text-gray-600">Exam not found or no questions available.</p>
+      <div className="min-h-screen flex items-center justify-center bg-neutral-50">
+        <p className="text-neutral-600">Exam not found or no questions available.</p>
       </div>
     );
   }
@@ -131,10 +131,10 @@ const TakeExam = () => {
   const currentQuestion = questions[currentQuestionIndex];
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-neutral-50 flex">
       {/* Sidebar */}
-      <div className="w-64 bg-blue-900 text-white flex flex-col fixed h-full">
-        <div className="p-6 border-b border-blue-800">
+      <div className="w-64 bg-primary-800 text-white flex flex-col fixed h-full">
+        <div className="p-6 border-b border-primary-700">
           <h1 className="text-xl font-bold">Online Examination System</h1>
         </div>
         
@@ -143,7 +143,7 @@ const TakeExam = () => {
             <li>
               <button
                 onClick={() => navigate('/dashboard')}
-                className="w-full text-left px-4 py-3 rounded-lg hover:bg-blue-700 transition font-medium"
+                className="w-full text-left px-4 py-3 rounded-lg hover:bg-primary-600 transition font-medium"
               >
                 Dashboard
               </button>
@@ -151,7 +151,7 @@ const TakeExam = () => {
             <li>
               <button
                 onClick={() => navigate('/exams')}
-                className="w-full text-left px-4 py-3 rounded-lg bg-blue-800 hover:bg-blue-700 transition font-medium"
+                className="w-full text-left px-4 py-3 rounded-lg bg-primary-700 hover:bg-primary-600 transition font-medium"
               >
                 Available Exams
               </button>
@@ -159,7 +159,7 @@ const TakeExam = () => {
             <li>
               <button
                 onClick={() => navigate('/results')}
-                className="w-full text-left px-4 py-3 rounded-lg hover:bg-blue-700 transition font-medium"
+                className="w-full text-left px-4 py-3 rounded-lg hover:bg-primary-600 transition font-medium"
               >
                 My Results
               </button>
@@ -169,7 +169,7 @@ const TakeExam = () => {
                 <li>
                   <button
                     onClick={() => navigate('/exam-management')}
-                    className="w-full text-left px-4 py-3 rounded-lg hover:bg-blue-700 transition font-medium"
+                    className="w-full text-left px-4 py-3 rounded-lg hover:bg-primary-600 transition font-medium"
                   >
                     Exam Management
                   </button>
@@ -177,7 +177,7 @@ const TakeExam = () => {
                 <li>
                   <button
                     onClick={() => navigate('/questions')}
-                    className="w-full text-left px-4 py-3 rounded-lg hover:bg-blue-700 transition font-medium"
+                    className="w-full text-left px-4 py-3 rounded-lg hover:bg-primary-600 transition font-medium"
                   >
                     Question Management
                   </button>
@@ -185,7 +185,7 @@ const TakeExam = () => {
                 <li>
                   <button
                     onClick={() => navigate('/reports')}
-                    className="w-full text-left px-4 py-3 rounded-lg hover:bg-blue-700 transition font-medium"
+                    className="w-full text-left px-4 py-3 rounded-lg hover:bg-primary-600 transition font-medium"
                   >
                     Reports
                   </button>
@@ -195,15 +195,15 @@ const TakeExam = () => {
           </ul>
         </nav>
 
-        <div className="p-4 border-t border-blue-800">
+        <div className="p-4 border-t border-primary-700">
           <div className="mb-4">
-            <p className="text-sm text-blue-200">Welcome,</p>
+            <p className="text-sm text-primary-200">Welcome,</p>
             <p className="font-semibold">{user?.fullName}</p>
-            <p className="text-xs text-blue-300 capitalize">{user?.role}</p>
+            <p className="text-xs text-primary-300 capitalize">{user?.role}</p>
           </div>
           <button
             onClick={handleLogout}
-            className="w-full bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition font-medium"
+            className="w-full bg-accent-600 text-white px-4 py-2 rounded-lg hover:bg-accent-700 transition font-medium"
           >
             Logout
           </button>
@@ -215,13 +215,13 @@ const TakeExam = () => {
         <div className="p-8">
           <div className="bg-white rounded-lg shadow-md p-8 mb-6">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold text-gray-900">
+              <h2 className="text-2xl font-bold text-neutral-900">
                 {exam.exam_title}
               </h2>
               <div className="flex items-center space-x-4">
-                <span className="text-gray-600">Question {currentQuestionIndex + 1} of {questions.length}</span>
+                <span className="text-neutral-600">Question {currentQuestionIndex + 1} of {questions.length}</span>
                 <div className={`px-4 py-2 rounded-lg font-bold ${
-                  timeRemaining < 300 ? 'bg-red-500 text-white' : 'bg-blue-700 text-white'
+                  timeRemaining < 300 ? 'bg-red-500 text-white' : 'bg-primary-600 text-white'
                 }`}>
                   {formatTime(timeRemaining)}
                 </div>
@@ -229,7 +229,7 @@ const TakeExam = () => {
             </div>
 
             <div className="mb-8">
-              <p className="text-lg text-gray-700 mb-6">
+              <p className="text-lg text-neutral-700 mb-6">
                 {currentQuestionIndex + 1}. {currentQuestion.question_text}
               </p>
 
@@ -240,8 +240,8 @@ const TakeExam = () => {
                     onClick={() => handleAnswerSelect(currentQuestion.question_id, option)}
                     className={`w-full text-left p-4 rounded-lg border-2 transition ${
                       answers[currentQuestion.question_id] === option
-                        ? 'border-blue-500 bg-blue-50'
-                        : 'border-gray-200 hover:border-blue-300'
+                        ? 'border-primary-500 bg-primary-50'
+                        : 'border-neutral-200 hover:border-primary-300'
                     }`}
                   >
                     <span className="font-semibold mr-4">{option}.</span>
@@ -255,7 +255,7 @@ const TakeExam = () => {
               <button
                 onClick={handlePreviousQuestion}
                 disabled={currentQuestionIndex === 0}
-                className="px-6 py-3 bg-blue-700 text-white rounded-lg font-semibold hover:bg-blue-800 transition disabled:opacity-50"
+                className="px-6 py-3 bg-primary-600 text-white rounded-lg font-semibold hover:bg-primary-700 transition disabled:opacity-50"
               >
                 Previous
               </button>
@@ -264,14 +264,14 @@ const TakeExam = () => {
                 <button
                   onClick={handleSubmitExam}
                   disabled={submitting}
-                  className="px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition disabled:opacity-50"
+                  className="px-6 py-3 bg-accent-600 text-white rounded-lg font-semibold hover:bg-accent-700 transition disabled:opacity-50"
                 >
                   {submitting ? 'Submitting...' : 'Submit Exam'}
                 </button>
               ) : (
                 <button
                   onClick={handleNextQuestion}
-                  className="px-6 py-3 bg-blue-700 text-white rounded-lg font-semibold hover:bg-blue-800 transition"
+                  className="px-6 py-3 bg-primary-600 text-white rounded-lg font-semibold hover:bg-primary-700 transition"
                 >
                   Next
                 </button>
@@ -279,7 +279,7 @@ const TakeExam = () => {
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Question Navigation</h3>
+              <h3 className="text-lg font-semibold text-neutral-900 mb-4">Question Navigation</h3>
               <div className="flex flex-wrap gap-2">
                 {questions.map((_, index) => (
                   <button
@@ -287,10 +287,10 @@ const TakeExam = () => {
                     onClick={() => setCurrentQuestionIndex(index)}
                     className={`w-10 h-10 rounded-lg font-semibold transition ${
                       currentQuestionIndex === index
-                        ? 'bg-blue-700 text-white'
+                        ? 'bg-primary-600 text-white'
                         : answers[questions[index].question_id]
-                        ? 'bg-purple-500 text-white'
-                        : 'bg-blue-200 text-gray-700 hover:bg-blue-300'
+                        ? 'bg-accent-500 text-white'
+                        : 'bg-primary-200 text-neutral-700 hover:bg-primary-300'
                     }`}
                   >
                     {index + 1}

@@ -28,20 +28,20 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-950 text-slate-100 p-4 relative overflow-hidden selection:bg-indigo-500 selection:text-white">
+    <div className="min-h-screen flex items-center justify-center bg-primary-900 text-white p-4 relative overflow-hidden selection:bg-primary-500 selection:text-white">
       {/* Background blobs */}
-      <div className="absolute top-1/4 left-1/4 w-[350px] h-[350px] rounded-full bg-indigo-600/10 blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-[350px] h-[350px] rounded-full bg-purple-600/10 blur-[100px] pointer-events-none" />
+      <div className="absolute top-1/4 left-1/4 w-[350px] h-[350px] rounded-full bg-primary-600/10 blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-[350px] h-[350px] rounded-full bg-accent-600/10 blur-[100px] pointer-events-none" />
 
-      <div className="glass-panel p-8 md:p-10 rounded-2xl w-full max-w-md shadow-2xl relative z-10 border border-slate-800 animate-slide-up">
+      <div className="glass-panel p-8 md:p-10 rounded-2xl w-full max-w-md shadow-2xl relative z-10 border border-neutral-800 animate-slide-up">
         <div className="text-center mb-8">
-          <Link to="/" className="inline-block mb-3 text-sm font-semibold text-indigo-400 hover:text-indigo-300 transition">
+          <Link to="/" className="inline-block mb-3 text-sm font-semibold text-primary-400 hover:text-primary-300 transition">
             &larr; Back to Home
           </Link>
           <h1 className="text-3xl font-extrabold text-white tracking-tight">
             Sign In
           </h1>
-          <p className="text-slate-400 text-sm mt-2">
+          <p className="text-neutral-400 text-sm mt-2">
             Access Future Skills Academy OEMS
           </p>
         </div>
@@ -57,7 +57,7 @@ const Login = () => {
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-slate-300 text-sm font-semibold mb-2">
+            <label className="block text-neutral-300 text-sm font-semibold mb-2">
               Email Address
             </label>
             <input
@@ -71,7 +71,7 @@ const Login = () => {
           </div>
 
           <div>
-            <label className="block text-slate-300 text-sm font-semibold mb-2">
+            <label className="block text-neutral-300 text-sm font-semibold mb-2">
               Password
             </label>
             <input
@@ -87,7 +87,7 @@ const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-xl font-bold transition-all duration-200 hover:opacity-95 shadow-[0_4px_20px_rgba(99,102,241,0.2)] disabled:opacity-50 active:scale-98 flex items-center justify-center gap-2"
+            className="w-full mt-2 bg-gradient-to-r from-primary-600 to-accent-600 text-white py-3 rounded-xl font-bold transition-all duration-200 hover:opacity-95 shadow-[0_4px_20px_rgba(37,99,235,0.2)] disabled:opacity-50 active:scale-98 flex items-center justify-center gap-2"
           >
             {loading ? (
               <>
@@ -103,9 +103,9 @@ const Login = () => {
           </button>
         </form>
 
-        <p className="text-center text-slate-400 mt-8 text-sm">
+        <p className="text-center text-neutral-400 mt-8 text-sm">
           Don't have an account?{' '}
-          <Link to="/register" className="text-indigo-400 hover:text-indigo-300 font-semibold transition hover:underline">
+          <Link to="/register" className="text-primary-400 hover:text-primary-300 font-semibold transition hover:underline">
             Register here
           </Link>
         </p>
